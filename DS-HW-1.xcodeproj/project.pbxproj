@@ -25,6 +25,9 @@
 /* Begin PBXFileReference section */
 		2440E72A1FCAFC8900C5DC29 /* DS-HW-1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "DS-HW-1"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2440E72D1FCAFC8900C5DC29 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		2440E7341FCAFCE800C5DC29 /* library1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = library1.h; sourceTree = "<group>"; };
+		2440E7361FCAFCE800C5DC29 /* Splay_Tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Splay_Tree.h; sourceTree = "<group>"; };
+		2440E7371FCAFCE900C5DC29 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,9 @@
 			isa = PBXGroup;
 			children = (
 				2440E72D1FCAFC8900C5DC29 /* main.cpp */,
+				2440E7341FCAFCE800C5DC29 /* library1.h */,
+				2440E7371FCAFCE900C5DC29 /* list.h */,
+				2440E7361FCAFCE800C5DC29 /* Splay_Tree.h */,
 			);
 			path = "DS-HW-1";
 			sourceTree = "<group>";
