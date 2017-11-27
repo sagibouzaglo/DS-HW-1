@@ -30,14 +30,28 @@ class binaryNode{
 /***************************************************************************/
 /*  Splay tree class                                                       */
 /*  Operations:                                                            */
-/*
+/*  insert - insert node to the tree                                       */
+/*  remove - remove node from the tree                                     */
+/*  isEmpty - return true if tree is empty                                 */
 /***************************************************************************/
 template<class T>
-class Splay_Tree {
+class SplayTree {
     public:
-    
-    const T
+        SplayTree (const SplayTree & rightSide);
+        const SplayTree & operator= (const SplayTree & rightSide);
+        ~SplayTree ();
+        bool isEmpty() const;
+        void insert (const T & data);
+        void remove (const T & date);
 
+    private:
+        const binaryNode <T> *root;
+        const binaryNode <T> *emptyNode;
+        const T Not_Found;  // in case the wanted node is not found.
+    
+        void rotateLeft (binaryNode<T>* & node) const;
+        void rotateRight (binaryNode<T>* & node) const;
+        void splayRoot (const T & target, binaryNode<T>* & root) const;
     };
 /**---------------Implementation of Splay_tree functions--------------------*/
     /**
@@ -57,4 +71,11 @@ class Splay_Tree {
     };
 };
 
+/***************************************************************************/
+/*  Checks if tree is Empty                                                 */
+/***************************************************************************/
+template<class T>
+bool SplayTree<T>::isEmpty() const{
+    return root == emptyNode;
+}
 #endif //DS_HW_1_SPLAY_TREE_H
