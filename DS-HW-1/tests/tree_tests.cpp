@@ -8,7 +8,7 @@
 static void testInsert(){
 
 }
-int run_tree_tests() {
+int main() {
 
     return 0;
 }

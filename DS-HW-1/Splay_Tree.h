@@ -44,45 +44,41 @@ class SplayTree {
     /*  Node Declaration                                                       */
     /***************************************************************************/
     template<class N>
-    class binaryNode {
+    class Vertex {
         N data;
         int key;
-        binaryNode<N> *l_child;
-        binaryNode<N> *r_child;
-
-        friend class Splay_Tree<T>;
-
+        Vertex<N> *left;
+        Vertex<N> *right;
+        friend class SplayTree;
     public:
-        binaryNode<N>(const T &data, int key) : data(data), key(key),
-                                                l_child(nullptr),
-                                                r_child(nullptr) {}
+        Vertex<N>(const T &data, int key) : data(data), key(key),
+                                                left(nullptr),
+                                                right(nullptr) {}
 
-        ~binaryNode<N>() = default;
+        ~Vertex<N>() = default;
 
-        binaryNode<N>(const binaryNode<T> &node) : data(node.data),
+        Vertex<N>(const Vertex<T> &node) : data(node.data),
                                                    key(node.key),
-                                                   l_child(node.l_child),
-                                                   r_child(node.r_child) {}
+                                                   left(node.left),
+                                                   right(node.right) {}
 
-        binaryNode<N>() = delete;
+        Vertex<N>() = delete;
     };
     /*******end of node********************/
     /**************************************************************************/
     /*  Splay_tree private  Declaration                */
     /**************************************************************************/
-    const binaryNode<N> *root;
-
-    SplayTree<T>(binaryNode<T> *root) : root(root) {}
+     Vertex<T> *root;
 
     /* Description:   Rotates left_child to be new root
     * Input:         current root
     * Output:        None.
     * Return Values: A pointer to the new root
     */
-    binaryNode<T> *rightRotate(binaryNode<T> *source) {
-        binaryNode<T> *new_root = source->l_child;
-        source->l_child = new_root->r_child;
-        new_root->r_child = source;
+    Vertex<T> *rightRotate(Vertex<T> *source) {
+        Vertex<T> *new_root = source->left;
+        source->left = source->left->right;
+        new_root->right = source;
         return new_root;
     }
 
@@ -91,10 +87,10 @@ class SplayTree {
     * Output:        None.
     * Return Values: A pointer to the new root
     */
-    binaryNode<T> *leftRotate(binaryNode<T> *source) {
-        binaryNode<T> *new_root = source->r_child;
-        source->r_child = new_root->l_child;
-        new_root->l_child = source;
+    Vertex<T> *leftRotate(Vertex<T> *source) {
+        Vertex<T> *new_root = source->right;
+        source->right = source->right->left;
+        new_root->left = source;
         return new_root;
     }
 
@@ -105,50 +101,50 @@ class SplayTree {
     * Output:        None.
     * Return Values: A pointer to the new root
     */
-    binaryNode<T> *splay(binaryNode<T> *root, int key) {
+    Vertex<T> *splay(Vertex<T> *root, int key) {
         //root is NULL or key is in root
         if (root == nullptr || root->key == key) return root;
 
         //Key is in right tree
         if (key > root->key) {
             //Couldnt find key in tree, return the last known root
-            if (root->r_child == nullptr) return root;
+            if (root->right == nullptr) return root;
             /*RR-Zag-Zag rotation*/
-            if (key > root->r_child->key) {
+            if (key > root->right->key) {
                 //Make key the new Right_Right
-                root->r_child->r_child = splay(root->r_child->r_child, key);
+                root->right->right = splay(root->right->right, key);
                 //Rotate top_down, second rotation will follow
                 root = leftRotate(root);
                 //RL-Zag-Zig roatation
-            } else if (key < root->r_child) {
+            } else if (key < root->right->key) {
                 //Make key the new Right_Left child
-                root->r_child->l_child = splay(root->r_child->l_child, key);
+                root->right->left = splay(root->right->left, key);
                 //Make key the Right_child
-                if (root->r_child->l_child != nullptr) {
-                    root->r_child = rightRotate(root->r_child);
+                if (root->right->left != nullptr) {
+                    root->right = rightRotate(root->right);
                 }
             }
             //if possiable bring r_child to root.
-            return (root->r_child == nullptr) ? (root) : (leftRotate(root));
+            return (root->right == nullptr) ? (root) : (leftRotate(root));
         }
             //Key is in left tree
         else {
             //Couldnt find key in tree, return the last known root
-            if (root->l_child == nullptr) return root;
+            if (root->left == nullptr) return root;
             /*LL-Zig-Zig rotatation */
-            if (key < root->l_child->key) {
+            if (key < root->left->key) {
                 //make Key the new L_L child
-                root->l_child->l_child = splay(root->l_child->l_child, key);
+                root->left->left = splay(root->left->left, key);
                 root = rightRotate(root);
             }
                 /*LR-Zig-Zag rotatation */
-            else if (key > root->l_child) {
-                root->l_child->r_child = splay(root->l_child->r_child, key);
-                if (root->l_child != nullptr) {
-                    root->l_child = leftRotate(root->l_child);
+            else if (key > root->left->key) {
+                root->left->right = splay(root->left->right, key);
+                if (root->left != nullptr) {
+                    root->left = leftRotate(root->left);
                 }
             }
-            return (root->l_child == nullptr) ? (root) : (rightRotate(root));
+            return (root->left == nullptr) ? (root) : (rightRotate(root));
         }
     }
 
@@ -158,10 +154,7 @@ class SplayTree {
     * Output:        None.
     * Return Values: None.
     */
-    void join(const SplayTree<T> &BiggerTree) {
-        this->Find_Max();
-        assert(this->root->r_child == nullptr);
-        this->root->r_child = BiggerTree.root;
+    void join(SplayTree<T> &BiggerTree) {
     }
 
     /* Description:   This function splits "this" tree to 2 trees around a given
@@ -172,13 +165,6 @@ class SplayTree {
     * Return Values: None.
     */
     void split(int key, SplayTree<T> *bigTree) {
-        //Bring key to root
-        this->Search(key);
-        //Make A second Bigger tree from right sub-tree
-        bigTree = new SplayTree(this->root->r_child);
-        //make "this" the small tree if its maximum as root, therefor its
-        // right child in NULL.
-        this->root->r_child = nullptr;
     }
 
 public:
@@ -196,11 +182,11 @@ public:
     *               TreeIsEmpty- if this is an empty tree
     * Return Values: A pointer to the new root
     */
-    T &Search(int key) {
+    T& &Search(int key){
         if (this->root == nullptr) {
             throw TreeExceptions::TreeIsEmpty();
         }
-        binaryNode<T> *new_root = splay(this->root, key);
+        Vertex<T> *new_root = splay(this->root, key);
         if (new_root->key != key) {
             throw TreeExceptions::KeyNotFound();
         }
@@ -217,9 +203,9 @@ public:
         if (this->root == nullptr) {
             throw TreeExceptions::TreeIsEmpty();
         }
-        binaryNode<T> *current = this->root;
-        while (current->l_child != nullptr) {
-            current = current->l_child;
+        Vertex<T> *current = this->root;
+        while (current->left != nullptr) {
+            current = current->left;
         }
         splay(this->root, current->key);
         return this->root->key;
@@ -235,9 +221,9 @@ public:
         if (this->root == nullptr) {
             throw TreeExceptions::TreeIsEmpty();
         }
-        binaryNode<T> *current = this->root;
-        while (current->r_child != nullptr) {
-            current = current->r_child;
+        Vertex<T> *current = this->root;
+        while (current->right != nullptr) {
+            current = current->right;
         }
         splay(this->root, current->key);
         return this->root->key;
@@ -252,19 +238,6 @@ public:
     * Return Values: None
     */
     void Insert(int key, const T &data) {
-        SplayTree<T> *BigTree;
-        this->split(key, BigTree);
-        //The wanted key exists
-        if (this->root->key == key) {
-            this->join(BigTree);
-            delete BigTree;
-            throw TreeExceptions::KeyExists();
-        }
-        binaryNode<T> *new_root = binaryNode<T>(data, key);
-        new_root->l_child = this->root;
-        new_root->r_child = BigTree->root;
-        this->root = new_root;
-        delete BigTree;
     }
 
     /* Description:   This function deletes the given key from the S_T
@@ -275,54 +248,9 @@ public:
     * Return Values: None
 */
     void Delete(int key) {
-        SplayTree<T> *BigTree;
-        this->split(key, BigTree);
-        //All keys originally bigger then key
-        if(this->root= nullptr){
-            this->join(BigTree);
-            delete BigTree;
-            throw TreeExceptions::KeyDoesntExists();
-        }
-        //There are smaller keys then keys but key isnt found
-        if (this.root != nullptr && this->root->key != key) {
-            this->join(BigTree);
-            delete BigTree;
-            throw TreeExceptions::KeyDoesntExists();
-        }
-            //All keys originally bigger then key
-        else if(this->root== nullptr &&BigTree->root!= nullptr){
-
-        }
     }
 };
 
 /**---------------Implementation of Splay_tree functions--------------------*/
-void SplayTree<T>::Insert(SplayTree<T> &s_t, int key, const T &data) {
-
-}
-
-/**
-* Splay_Tree constructor
-* Constructs a new empty Splay tree
-*/
-Splay_Tree<T>() : root(nullptr), size(0) {};
-
-/**
-* Splay_Tree copy constructor
-* Constructs a new empty Splay tree
-*/
-Splay_Tree<T>(const Splay_Tree <T> &toCopy) : root(nullptr), size(0) {
-/***************************************************************************/
-/*  Copy ctr implementation                                                */
-/***************************************************************************/
-};
-
-/***************************************************************************/
-/*  Checks if tree is Empty                                                 */
-/***************************************************************************/
-template<class T>
-bool SplayTree<T>::isEmpty() const {
-    return root == emptyNode;
-}
 
 #endif //DS_HW_1_SPLAY_TREE_H
