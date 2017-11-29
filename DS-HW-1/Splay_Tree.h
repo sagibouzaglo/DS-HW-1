@@ -19,9 +19,15 @@ namespace TreeExceptions {
     public:
         TreeIsEmpty() : std::runtime_error("Tree is Empty") {}
     };
+
     class KeyExists : public std::runtime_error {
     public:
         KeyExists() : std::runtime_error("Key already exists") {}
+    };
+
+    class KeyDoesntExists : public std::runtime_error {
+    public:
+        KeyDoesntExists() : std::runtime_error("Key Doesnt exists") {}
     };
 
 }
@@ -66,7 +72,7 @@ class SplayTree {
     /**************************************************************************/
     const binaryNode<N> *root;
 
-    SplayTree<T>(binaryNode<T>* root):root(root){}
+    SplayTree<T>(binaryNode<T> *root) : root(root) {}
 
     /* Description:   Rotates left_child to be new root
     * Input:         current root
@@ -154,8 +160,8 @@ class SplayTree {
     */
     void join(const SplayTree<T> &BiggerTree) {
         this->Find_Max();
-        assert(this->root->r_child== nullptr);
-        this->root->r_child=BiggerTree.root;
+        assert(this->root->r_child == nullptr);
+        this->root->r_child = BiggerTree.root;
     }
 
     /* Description:   This function splits "this" tree to 2 trees around a given
@@ -165,14 +171,14 @@ class SplayTree {
     * Output:        None.
     * Return Values: None.
     */
-    void split(int key,SplayTree<T>* bigTree) {
+    void split(int key, SplayTree<T> *bigTree) {
         //Bring key to root
         this->Search(key);
         //Make A second Bigger tree from right sub-tree
         bigTree = new SplayTree(this->root->r_child);
         //make "this" the small tree if its maximum as root, therefor its
         // right child in NULL.
-        this->root->r_child= nullptr;
+        this->root->r_child = nullptr;
     }
 
 public:
@@ -246,19 +252,47 @@ public:
     * Return Values: None
     */
     void Insert(int key, const T &data) {
-        SplayTree<T>* BigTree;
-        this->split(key,BigTree);
+        SplayTree<T> *BigTree;
+        this->split(key, BigTree);
         //The wanted key exists
-        if(this->root->key==key){
+        if (this->root->key == key) {
             this->join(BigTree);
             delete BigTree;
             throw TreeExceptions::KeyExists();
         }
-        binaryNode<T>* new_root=binaryNode<T>(data,key);
-        new_root->l_child=this->root;
-        new_root->r_child=BigTree->root;
-        this->root=new_root;
+        binaryNode<T> *new_root = binaryNode<T>(data, key);
+        new_root->l_child = this->root;
+        new_root->r_child = BigTree->root;
+        this->root = new_root;
         delete BigTree;
+    }
+
+    /* Description:   This function deletes the given key from the S_T
+     * Input:         Data to be saved
+    *               key in dictionary
+    * Output:        None.
+    * Exceptions:    KeyDoesntExists if the given key doesnt exists
+    * Return Values: None
+*/
+    void Delete(int key) {
+        SplayTree<T> *BigTree;
+        this->split(key, BigTree);
+        //All keys originally bigger then key
+        if(this->root= nullptr){
+            this->join(BigTree);
+            delete BigTree;
+            throw TreeExceptions::KeyDoesntExists();
+        }
+        //There are smaller keys then keys but key isnt found
+        if (this.root != nullptr && this->root->key != key) {
+            this->join(BigTree);
+            delete BigTree;
+            throw TreeExceptions::KeyDoesntExists();
+        }
+            //All keys originally bigger then key
+        else if(this->root== nullptr &&BigTree->root!= nullptr){
+
+        }
     }
 };
 
