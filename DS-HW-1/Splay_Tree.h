@@ -77,7 +77,8 @@ class SplayTree {
         Vertex<T> *new_root = source->right;
         source->right = source->right->left;
         new_root->left = source;
-        return new_root;
+        source=new_root;
+        return source;
     }
 
     /* Description:   This function returns the pointer to newly assigned root
@@ -127,7 +128,7 @@ class SplayTree {
             else if (key > root->left->key) {
                 root->left->right = splay(root->left->right, key);
                 if (root->left->right != nullptr) {
-                    root->left->right = leftRotate(root->left);
+                    root->left = leftRotate(root->left);
                 }
             }
             return (root->left == nullptr) ? (root) : (rightRotate(root));
