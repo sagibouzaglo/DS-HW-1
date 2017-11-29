@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 namespace TreeExceptions {
     class KeyNotFound : public std::runtime_error {
@@ -16,7 +17,11 @@ namespace TreeExceptions {
 
     class TreeIsEmpty : public std::runtime_error {
     public:
-        KeyNotFound() : std::runtime_error("Tree is Empty") {}
+        TreeIsEmpty() : std::runtime_error("Tree is Empty") {}
+    };
+    class KeyExists : public std::runtime_error {
+    public:
+        KeyExists() : std::runtime_error("Key already exists") {}
     };
 
 }
@@ -60,6 +65,8 @@ class SplayTree {
     /*  Splay_tree private  Declaration                */
     /**************************************************************************/
     const binaryNode<N> *root;
+
+    SplayTree<T>(binaryNode<T>* root):root(root){}
 
     /* Description:   Rotates left_child to be new root
     * Input:         current root
@@ -139,13 +146,35 @@ class SplayTree {
         }
     }
 
+    /* Description:   This function joins "this" tree with a "BiggerTree"
+     * meaning all keys in "BiggerTree" are bigger then all keys in "this" Tree
+    * Input:         The "Bigger Tree" to join
+    * Output:        None.
+    * Return Values: None.
+    */
+    void join(const SplayTree<T> &BiggerTree) {
+        this->Find_Max();
+        assert(this->root->r_child== nullptr);
+        this->root->r_child=BiggerTree.root;
+    }
 
+    /* Description:   This function splits "this" tree to 2 trees around a given
+     *  key.
+    * Input:         The key around to split.
+     *               a pointer where the Bigger tree will be allocated
+    * Output:        None.
+    * Return Values: None.
+    */
+    void split(int key,SplayTree<T>* bigTree) {
+        //Bring key to root
+        this->Search(key);
+        //Make A second Bigger tree from right sub-tree
+        bigTree = new SplayTree(this->root->r_child);
+        //make "this" the small tree if its maximum as root, therefor its
+        // right child in NULL.
+        this->root->r_child= nullptr;
+    }
 
-    /**
-    void rotateLeft (binaryNode<T>* & node) const;
-    void rotateRight (binaryNode<T>* & node) const;
-    void splayRoot (const T & target, binaryNode<T>* & root) const;
-     **/
 public:
     SplayTree<T>() = default;
 
@@ -182,13 +211,14 @@ public:
         if (this->root == nullptr) {
             throw TreeExceptions::TreeIsEmpty();
         }
-        binaryNode<T> *current=this->root;
-        while (current->l_child!= nullptr){
-            current=current->l_child;
+        binaryNode<T> *current = this->root;
+        while (current->l_child != nullptr) {
+            current = current->l_child;
         }
-        splay(this->root,current->key);
+        splay(this->root, current->key);
         return this->root->key;
     }
+
     /* Description:   This function returns the maximum key
     * Input:         None.
     * Output:        None.
@@ -199,21 +229,37 @@ public:
         if (this->root == nullptr) {
             throw TreeExceptions::TreeIsEmpty();
         }
-        binaryNode<T> *current=this->root;
-        while (current->r_child!= nullptr){
-            current=current->r_child;
+        binaryNode<T> *current = this->root;
+        while (current->r_child != nullptr) {
+            current = current->r_child;
         }
-        splay(this->root,current->key);
+        splay(this->root, current->key);
         return this->root->key;
     }
 
-    void Insert(SplayTree<T> &s_t, int key, const T &data);
-    /**
-        const SplayTree & operator= (const SplayTree & rightSide);
-        bool isEmpty() const;
-        void insert (const T & data);
-        void remove (const T & date);
-    **/
+    /* Description:   This function inserts new data  with a given
+     * key to the Splay Tree
+    * Input:         Data to be saved
+     *               key in dictionary
+    * Output:        None.
+    * Exceptions:    KeyExists if the given key already exists
+    * Return Values: None
+    */
+    void Insert(int key, const T &data) {
+        SplayTree<T>* BigTree;
+        this->split(key,BigTree);
+        //The wanted key exists
+        if(this->root->key==key){
+            this->join(BigTree);
+            delete BigTree;
+            throw TreeExceptions::KeyExists();
+        }
+        binaryNode<T>* new_root=binaryNode<T>(data,key);
+        new_root->l_child=this->root;
+        new_root->r_child=BigTree->root;
+        this->root=new_root;
+        delete BigTree;
+    }
 };
 
 /**---------------Implementation of Splay_tree functions--------------------*/
@@ -235,7 +281,6 @@ Splay_Tree<T>(const Splay_Tree <T> &toCopy) : root(nullptr), size(0) {
 /***************************************************************************/
 /*  Copy ctr implementation                                                */
 /***************************************************************************/
-};
 };
 
 /***************************************************************************/
