@@ -8,6 +8,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+namespace TreeExceptions {
+    class KeyNotFound : public std::runtime_error {
+    public:
+        KeyNotFound() : std::runtime_error("Key not found") {}
+    };
+    class KeyNotFound : public std::runtime_error {
+    public:
+        KeyNotFound() : std::runtime_error("Key not found") {}
+    };
+
+}
 /***************************************************************************/
 /*  Splay tree class                                                       */
 /*  Operations:                                                            */
@@ -80,7 +91,7 @@ class SplayTree {
     * Output:        None.
     * Return Values: A pointer to the new root
     */
-    binaryNode<T>* splay(binaryNode<T> *root, int key) {
+    binaryNode<T> *splay(binaryNode<T> *root, int key) {
         //root is NULL or key is in root
         if (root == nullptr || root->key == key) return root;
 
@@ -93,7 +104,7 @@ class SplayTree {
                 //Make key the new Right_Right
                 root->r_child->r_child = splay(root->r_child->r_child, key);
                 //Rotate top_down, second rotation will follow
-                root= leftRotate(root);
+                root = leftRotate(root);
                 //RL-Zag-Zig roatation
             } else if (key < root->r_child) {
                 //Make key the new Right_Left child
@@ -104,26 +115,26 @@ class SplayTree {
                 }
             }
             //if possiable bring r_child to root.
-            return (root->r_child== nullptr)?(root):(leftRotate(root));
+            return (root->r_child == nullptr) ? (root) : (leftRotate(root));
         }
             //Key is in left tree
         else {
             //Couldnt find key in tree, return the last known root
-            if(root->l_child== nullptr) return root;
+            if (root->l_child == nullptr) return root;
             /*LL-Zig-Zig rotatation */
-            if(key<root->l_child->key){
+            if (key < root->l_child->key) {
                 //make Key the new L_L child
-                root->l_child->l_child=splay(root->l_child->l_child,key);
-                root=rightRotate(root);
+                root->l_child->l_child = splay(root->l_child->l_child, key);
+                root = rightRotate(root);
             }
                 /*LR-Zig-Zag rotatation */
-            else if(key>root->l_child){
-                root->l_child->r_child=splay(root->l_child->r_child,key);
-                if(root->l_child!= nullptr){
-                    root->l_child=leftRotate(root->l_child);
+            else if (key > root->l_child) {
+                root->l_child->r_child = splay(root->l_child->r_child, key);
+                if (root->l_child != nullptr) {
+                    root->l_child = leftRotate(root->l_child);
                 }
             }
-            return (root->l_child== nullptr)?(root):(rightRotate(root));
+            return (root->l_child == nullptr) ? (root) : (rightRotate(root));
         }
     }
 
@@ -141,18 +152,18 @@ public:
 
     SplayTree<T>(const SplayTree<T> &toCopy) : root(toCopy.root) {}
 
-    /* Description:   This function returns the pointer to newly assigned root
-     *                 if key was found then he will be the new root,if not
-     *                 it makes the root the last accessed node while searching
-    * Input:         current root
+    /* Description:   This function returns the data in the indicated key if
+     * found
+    * Input:         the wanted key
     * Output:        None.
+    * Exceptions:    KeynotFound- if the given key wasnt found
     * Return Values: A pointer to the new root
     */
-    T& Search(int key){
-        binaryNode<T>* new_root=splay(this->root,key);
+    T& Search(int key) {
+        binaryNode<T> *new_root = splay(this->root, key);
         //empty Splay tree
-        if(new_root== nullptr){
-            throw //////////////////////////////////////////////////////////////////////////;
+        if (new_root == nullptr) {
+            throw TreeExceptions::KeyNotFound();
         }
         return new_root->data;
     }
