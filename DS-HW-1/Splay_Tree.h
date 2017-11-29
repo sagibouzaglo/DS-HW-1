@@ -49,18 +49,23 @@ class SplayTree {
         int key;
         Vertex<N> *left;
         Vertex<N> *right;
+
         friend class SplayTree;
+
     public:
         Vertex<N>(const T &data, int key) : data(data), key(key),
-                                                left(nullptr),
-                                                right(nullptr) {}
+                                            left(nullptr),
+                                            right(nullptr) {}
+
+        Vertex<N>(const T &data, int key, Vertex<T> *left, Vertex<T> *right) :
+                data(data), key(key), left(left), right(right) {}
 
         ~Vertex<N>() = default;
 
         Vertex<N>(const Vertex<T> &node) : data(node.data),
-                                                   key(node.key),
-                                                   left(node.left),
-                                                   right(node.right) {}
+                                           key(node.key),
+                                           left(node.left),
+                                           right(node.right) {}
 
         Vertex<N>() = delete;
     };
@@ -68,18 +73,19 @@ class SplayTree {
     /**************************************************************************/
     /*  Splay_tree private  Declaration                */
     /**************************************************************************/
-     Vertex<T> *root;
+    Vertex<T> *root;
 
     /* Description:   Rotates left_child to be new root
     * Input:         current root
     * Output:        None.
     * Return Values: A pointer to the new root
     */
-    Vertex<T> *rightRotate(Vertex<T> *source) {
+    Vertex<T> * rightRotate(Vertex<T> *source) {
         Vertex<T> *new_root = source->left;
-        source->left = source->left->right;
+        source->left = new_root->right;
         new_root->right = source;
-        return new_root;
+        source=new_root;
+        return source;
     }
 
     /* Description:   Rotates right_child to be new root
@@ -140,11 +146,49 @@ class SplayTree {
                 /*LR-Zig-Zag rotatation */
             else if (key > root->left->key) {
                 root->left->right = splay(root->left->right, key);
-                if (root->left != nullptr) {
-                    root->left = leftRotate(root->left);
+                if (root->left->right != nullptr) {
+                    root->left->right = leftRotate(root->left);
                 }
             }
-            return (root->left == nullptr) ? (root) : (rightRotate(root));
+            return (root->left == nullptr) ? (root) : (root=rightRotate(root));
+        }
+    }
+
+
+    /* Description:   This function splits root to 2 trees around a given
+    *  key.
+    * Input:           The root you want to split
+     *              The key around to split, pointer to aftermath left_root.
+     *              ,pointer to aftermath right_root
+    *               2 pointers for the left and right tree
+    * Output:        None.
+    * Return Values: false if key wasnt found, true if key is in tree
+    */
+    bool split(Vertex<T> *root, Vertex<T> *&left, Vertex<T> *&right, int key) {
+        if (root == nullptr) {
+            throw TreeExceptions::TreeIsEmpty();
+        }
+        //splay to the root
+        root=splay(root, key);
+        //root is smaller then key
+        if (root->key < key) {
+            right = root->right;
+            left = root;
+            left->right = nullptr;
+            return false;
+        }
+            //root is bigger than key
+        else if (root->key > key) {
+            left = root->left;
+            right = root;
+            right->left = nullptr;
+            return false;
+        }
+            //root equals key
+        else {
+            left = root->left;
+            right = root->right;
+            return true;
         }
     }
 
@@ -157,18 +201,9 @@ class SplayTree {
     void join(SplayTree<T> &BiggerTree) {
     }
 
-    /* Description:   This function splits "this" tree to 2 trees around a given
-     *  key.
-    * Input:         The key around to split.
-     *               a pointer where the Bigger tree will be allocated
-    * Output:        None.
-    * Return Values: None.
-    */
-    void split(int key, SplayTree<T> *bigTree) {
-    }
 
 public:
-    SplayTree<T>() = default;
+    SplayTree<T>():root(nullptr){}
 
     ~SplayTree() = default;
 
@@ -182,15 +217,15 @@ public:
     *               TreeIsEmpty- if this is an empty tree
     * Return Values: A pointer to the new root
     */
-    T& &Search(int key){
+    T &Search(int key) {
         if (this->root == nullptr) {
             throw TreeExceptions::TreeIsEmpty();
         }
-        Vertex<T> *new_root = splay(this->root, key);
-        if (new_root->key != key) {
+        this->root= splay(this->root, key);
+        if (this->root->key != key) {
             throw TreeExceptions::KeyNotFound();
         }
-        return new_root->data;
+        return this->root->data;
     }
 
     /* Description:   This function returns the minimum key
@@ -237,7 +272,22 @@ public:
     * Exceptions:    KeyExists if the given key already exists
     * Return Values: None
     */
-    void Insert(int key, const T &data) {
+    bool Insert(int key, const T &data) {
+        if (this->root == nullptr) {
+            this->root=new Vertex<T>(data,key);
+            return true;
+        }
+        Vertex<T> *right, *left;
+        //Key wasnt found
+        if (!(split(this->root, left, right, key))) {
+            Vertex<T>* new_root=new Vertex<T>(data,key,left,right);
+            this->root=new_root;
+            return true;
+        }
+        //Key exists
+        else{
+            throw TreeExceptions::KeyExists();
+        }
     }
 
     /* Description:   This function deletes the given key from the S_T
