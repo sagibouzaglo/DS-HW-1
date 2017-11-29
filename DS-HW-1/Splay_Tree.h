@@ -13,9 +13,10 @@ namespace TreeExceptions {
     public:
         KeyNotFound() : std::runtime_error("Key not found") {}
     };
-    class KeyNotFound : public std::runtime_error {
+
+    class TreeIsEmpty : public std::runtime_error {
     public:
-        KeyNotFound() : std::runtime_error("Key not found") {}
+        KeyNotFound() : std::runtime_error("Tree is Empty") {}
     };
 
 }
@@ -157,15 +158,53 @@ public:
     * Input:         the wanted key
     * Output:        None.
     * Exceptions:    KeynotFound- if the given key wasnt found
+    *               TreeIsEmpty- if this is an empty tree
     * Return Values: A pointer to the new root
     */
-    T& Search(int key) {
+    T &Search(int key) {
+        if (this->root == nullptr) {
+            throw TreeExceptions::TreeIsEmpty();
+        }
         binaryNode<T> *new_root = splay(this->root, key);
-        //empty Splay tree
-        if (new_root == nullptr) {
+        if (new_root->key != key) {
             throw TreeExceptions::KeyNotFound();
         }
         return new_root->data;
+    }
+
+    /* Description:   This function returns the minimum key
+    * Input:         None.
+    * Output:        None.
+    * Exceptions:    TreeIsEmpty- if this is an empty tree
+    * Return Values: The minimum key
+    */
+    int Find_Min() {
+        if (this->root == nullptr) {
+            throw TreeExceptions::TreeIsEmpty();
+        }
+        binaryNode<T> *current=this->root;
+        while (current->l_child!= nullptr){
+            current=current->l_child;
+        }
+        splay(this->root,current->key);
+        return this->root->key;
+    }
+    /* Description:   This function returns the maximum key
+    * Input:         None.
+    * Output:        None.
+    * Exceptions:    TreeIsEmpty- if this is an empty tree
+    * Return Values: The maximum key
+    */
+    int Find_Max() {
+        if (this->root == nullptr) {
+            throw TreeExceptions::TreeIsEmpty();
+        }
+        binaryNode<T> *current=this->root;
+        while (current->r_child!= nullptr){
+            current=current->r_child;
+        }
+        splay(this->root,current->key);
+        return this->root->key;
     }
 
     void Insert(SplayTree<T> &s_t, int key, const T &data);
