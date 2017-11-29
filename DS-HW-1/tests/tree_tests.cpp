@@ -5,14 +5,6 @@
 #include "mtmtest.h"
 #include "../Splay_Tree.h"
 
-static void testInsert(){
-    SplayTree<int> tree;
-    tree.Insert(1,1);
-    tree.Insert(2,2);
-    tree.Insert(3,3);
-    tree.Insert(4,4);
-
-}
 
 
 int main() {
@@ -24,6 +16,9 @@ int main() {
     tree.Search(12);
     tree.Search(7);
     tree.Search(14);
+    for(int i=1; i<10; i++)
+        tree.Delete(i+1);
     std::cout << "InOrder Print: " << std::endl; //EXPECTED: 1 3 4 6 8 15 32
+    tree.InOrderPrint();
     return 0;
 }

@@ -9,28 +9,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-namespace TreeExceptions {
-    class KeyNotFound : public std::runtime_error {
-    public:
-        KeyNotFound() : std::runtime_error("Key not found") {}
-    };
 
-    class TreeIsEmpty : public std::runtime_error {
-    public:
-        TreeIsEmpty() : std::runtime_error("Tree is Empty") {}
-    };
-
-    class KeyExists : public std::runtime_error {
-    public:
-        KeyExists() : std::runtime_error("Key already exists") {}
-    };
-
-    class KeyDoesntExists : public std::runtime_error {
-    public:
-        KeyDoesntExists() : std::runtime_error("Key Doesnt exists") {}
-    };
-
-}
 /***************************************************************************/
 /*  Splay tree class                                                       */
 /*  Operations:                                                            */
@@ -49,7 +28,6 @@ class SplayTree {
         int key;
         Vertex<N> *left;
         Vertex<N> *right;
-
         friend class SplayTree;
 
     public:
@@ -74,6 +52,8 @@ class SplayTree {
     /*  Splay_tree private  Declaration                */
     /**************************************************************************/
     Vertex<T> *root;
+
+    SplayTree<T>(Vertex<T>* root):root(root){}
 
     /* Description:   Rotates left_child to be new root
     * Input:         current root
@@ -150,7 +130,7 @@ class SplayTree {
                     root->left->right = leftRotate(root->left);
                 }
             }
-            return (root->left == nullptr) ? (root) : (root=rightRotate(root));
+            return (root->left == nullptr) ? (root) : (rightRotate(root));
         }
     }
 
@@ -166,7 +146,7 @@ class SplayTree {
     */
     bool split(Vertex<T> *root, Vertex<T> *&left, Vertex<T> *&right, int key) {
         if (root == nullptr) {
-            throw TreeExceptions::TreeIsEmpty();
+            return false;
         }
         //splay to the root
         root=splay(root, key);
@@ -198,7 +178,30 @@ class SplayTree {
     * Output:        None.
     * Return Values: None.
     */
-    void join(SplayTree<T> &BiggerTree) {
+    Vertex<T>* join(Vertex<T>* T1,Vertex<T>* T2) {
+        SplayTree<T>* tree1=new SplayTree<T>(T1);
+        SplayTree<T>* tree2=new SplayTree<T>(T2);
+        Vertex<T>* new_root;
+
+        tree1->Find_Max();
+        tree2->Find_Min();
+        if(tree1->root!= nullptr) {
+            tree1->root->right = tree2->root;
+            new_root=tree1->root;
+        } else{
+            new_root=tree2->root;
+        }
+        delete tree1;
+        delete tree2;
+        return new_root;
+    }
+
+    void inOrderTraversal(Vertex<T>* root){
+        if(root== nullptr) return;
+        inOrderTraversal(root->left);
+        std::cout <<root->key<<" ";
+        inOrderTraversal(root->right);
+        return;
     }
 
 
@@ -215,17 +218,15 @@ public:
     * Output:        None.
     * Exceptions:    KeynotFound- if the given key wasnt found
     *               TreeIsEmpty- if this is an empty tree
-    * Return Values: A pointer to the new root
+    * Return Values: true if key was found
+     *               false if not
     */
-    T &Search(int key) {
+    bool Search(int key) {
         if (this->root == nullptr) {
-            throw TreeExceptions::TreeIsEmpty();
+            return false;
         }
         this->root= splay(this->root, key);
-        if (this->root->key != key) {
-            throw TreeExceptions::KeyNotFound();
-        }
-        return this->root->data;
+        return (this->root->key == key);
     }
 
     /* Description:   This function returns the minimum key
@@ -236,13 +237,13 @@ public:
     */
     int Find_Min() {
         if (this->root == nullptr) {
-            throw TreeExceptions::TreeIsEmpty();
+            return -1;
         }
         Vertex<T> *current = this->root;
         while (current->left != nullptr) {
             current = current->left;
         }
-        splay(this->root, current->key);
+        this->root=splay(this->root, current->key);
         return this->root->key;
     }
 
@@ -254,13 +255,13 @@ public:
     */
     int Find_Max() {
         if (this->root == nullptr) {
-            throw TreeExceptions::TreeIsEmpty();
+            return -1;
         }
         Vertex<T> *current = this->root;
         while (current->right != nullptr) {
             current = current->right;
         }
-        splay(this->root, current->key);
+        this->root=splay(this->root, current->key);
         return this->root->key;
     }
 
@@ -270,7 +271,8 @@ public:
      *               key in dictionary
     * Output:        None.
     * Exceptions:    KeyExists if the given key already exists
-    * Return Values: None
+    * Return Values: true-if insert succeded
+     *               false if not
     */
     bool Insert(int key, const T &data) {
         if (this->root == nullptr) {
@@ -286,7 +288,7 @@ public:
         }
         //Key exists
         else{
-            throw TreeExceptions::KeyExists();
+            return false;
         }
     }
 
@@ -297,8 +299,27 @@ public:
     * Exceptions:    KeyDoesntExists if the given key doesnt exists
     * Return Values: None
 */
-    void Delete(int key) {
+    bool Delete(int key) {
+        if(this->root== nullptr){
+            return false;
+        }
+        //key was found
+            if(this->Search(key)){
+                Vertex<T>* toDelete=this->root;
+                this->root=join(this->root->left,this->root->right);
+                delete toDelete;
+                return true;
+            }
+        else{
+                return false;
+            }
     }
+
+    void InOrderPrint(){
+        inOrderTraversal(this->root);
+    }
+
+
 };
 
 /**---------------Implementation of Splay_tree functions--------------------*/
