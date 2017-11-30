@@ -205,6 +205,8 @@ class SplayTree {
         } else{
             new_root=tree2->root;
         }
+        tree1= nullptr;
+        tree2= nullptr;
         delete tree1;
         delete tree2;
         return new_root;
@@ -225,14 +227,24 @@ class SplayTree {
         inOrderTraversal(root->right,func);
         return;
     }
-
+    void postOrderDemolition(Vertex<T>* root){
+        if(root== nullptr){
+            return;
+        }
+        postOrderDemolition(root->left);
+        postOrderDemolition(root->right);
+        delete root;
+        root= nullptr;
+    }
 
 public:
     SplayTree<T>():root(nullptr){}
 
-    ~SplayTree() = default;
+    ~SplayTree(){
+        postOrderDemolition(this->root);
+    }
 
-    SplayTree<T>(const SplayTree<T> &toCopy) : root(toCopy.root) {}
+    SplayTree<T>(const SplayTree<T> &toCopy) : root(toCopy.root) {}///////////////////////////////////////////////
 
     /* Description:   This function returns the data in the indicated key if
      * found
@@ -340,7 +352,7 @@ public:
         }
     }
     template <class Function>
-    void InOrderPrint(const Function& func){
+    void InOrder(const Function& func){
         inOrderTraversal(this->root,func);
     }
 

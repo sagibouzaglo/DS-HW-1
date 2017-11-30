@@ -27,11 +27,11 @@ int main() {
             tree.Insert<Compare>(arr[i],Compare());
             //tree.insertElement<Compare>(arr[i], Comp(arr[i]));
         std::cout << "InOrder Print: " << std::endl; //EXPECTED: 1 3 4 6 8 15 32
-    tree.InOrderPrint(printInt);
+    tree.InOrder(printInt);
     tree.Delete(8,Compare());
     tree.Delete(20,Compare());
     std::cout << "InOrder Print: " << std::endl; //EXPECTED: 1 3 4 6 8 15 32
-    tree.InOrderPrint(printInt);
+    tree.InOrder(printInt);
 
     for(int i=1; i<20; i++)
         tree.Insert((rand()%i)*(rand()%i +i),Compare());
@@ -41,6 +41,6 @@ int main() {
         tree.Delete(i,Compare());
 
     std::cout << "InOrder Print: " << std::endl; //EXPECTED: 1 3 4 6 8 15 32
-    tree.InOrderPrint(printInt);
+    tree.InOrder(printInt);
     return 0;
 }
