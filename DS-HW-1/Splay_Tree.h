@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <assert.h>
 
+#define nullptr 0
 
 /***************************************************************************/
 /*  Splay tree class                                                       */
@@ -36,14 +37,15 @@ class SplayTree {
 
         Vertex<N>(const T &data, Vertex<T> *left, Vertex<T> *right) :
                 data(data), left(left), right(right) {}
-
-        ~Vertex<N>() = default;
+/*
+        ~Vertex<N>(){
+            delete (&(this->data));//////////////////////////////////////////////////////
+        }
+        */
 
         Vertex<N>(const Vertex<T> &node) : data(node.data),
                                            left(node.left),
                                            right(node.right) {}
-
-        Vertex<N>() = delete;
     };
     /*******end of node********************/
     /**************************************************************************/
@@ -193,22 +195,27 @@ class SplayTree {
     */
     template <class Compare>
     Vertex<T>* join(Vertex<T>* T1,Vertex<T>* T2, const Compare& compare) {
-        SplayTree<T>* tree1=new SplayTree<T>(T1);
-        SplayTree<T>* tree2=new SplayTree<T>(T2);
-        Vertex<T>* new_root;
-
-        tree1->Find_Max(compare);
-        tree2->Find_Min(compare);
-        if(tree1->root!= nullptr) {
-            tree1->root->right = tree2->root;
-            new_root=tree1->root;
-        } else{
-            new_root=tree2->root;
+        Vertex<T>* current=T1;
+        if(current!=nullptr){
+            while (current->right!=nullptr){
+                current=current->right;
+            }
+            T1=splay(T1,current->data,compare);
         }
-        tree1= nullptr;
-        tree2= nullptr;
-        delete tree1;
-        delete tree2;
+        current=T2;
+        if(current!=nullptr){
+            while (current->left!=nullptr){
+                current=current->left;
+            }
+            T2=splay(T2,current->data,compare);
+        }
+        Vertex<T>* new_root;
+        if(T1!= nullptr) {
+            T1->right = T2;
+            new_root=T1;
+        } else{
+            new_root=T2;
+        }
         return new_root;
     }
     /* Description:   This function does an InOrder Traversal on a given root
@@ -234,7 +241,6 @@ class SplayTree {
         postOrderDemolition(root->left);
         postOrderDemolition(root->right);
         delete root;
-        root= nullptr;
     }
 
 public:
@@ -356,6 +362,9 @@ public:
         inOrderTraversal(this->root,func);
     }
 
+    T& GetRoot(){
+        return this->root->data;
+    }
 
 };
 

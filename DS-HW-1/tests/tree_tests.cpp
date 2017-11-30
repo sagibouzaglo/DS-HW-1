@@ -1,8 +1,8 @@
 //
 // Created by Amir on 29/11/2017.
 //
-
-#include "mtmtest.h"
+#include <iostream>
+#include <sstream>
 #include "../Splay_Tree.h"
 
 class Compare {
@@ -21,6 +21,7 @@ void printInt(const int& x) {
 }
 
 int main() {
+    //
         SplayTree<int> tree;
         int arr[8] = {1,15,3,8,32,6,4,8};
         for(int i=0; i<8; i++)

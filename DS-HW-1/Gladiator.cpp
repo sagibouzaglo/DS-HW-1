@@ -8,6 +8,8 @@
 Gladiator::Gladiator(int ID, int trainerID, int level): ID(ID), trainerID(trainerID),
 level(level) {}
 /**---------------------------------------------------------------------------*/
+//Gladiator::~Gladiator() {}//////////////////////////////////////////////////////////////////////////////
+/**---------------------------------------------------------------------------*/
 Gladiator::Gladiator(const Gladiator& glad):ID(glad.ID),trainerID(glad.trainerID),
                                  level(glad.level){}
 /**---------------------------------------------------------------------------*/
@@ -16,7 +18,7 @@ StatusType Gladiator::LevelUp(int levelincrease) {
     return SUCCESS;
 }
 /**---------------------------------------------------------------------------*/
-int Gladiator::GetLevel() {
+int Gladiator::GetLevel() const {
     return this->level;
 }
 /**---------------------------------------------------------------------------*/

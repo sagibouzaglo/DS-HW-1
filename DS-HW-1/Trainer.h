@@ -12,19 +12,27 @@
 #include "Gladiator.h"
 #include "Splay_Tree.h"
 
-class Trainer{
+class Trainer {
     int ID;
     int number_of_gladiators;
     SplayTree<Gladiator> glad_tree;
-    Gladiator* best_gladiator;
+    Gladiator *best_gladiator;
 public:
     Trainer(int ID);
+
     ~Trainer();
-    Trainer(const Trainer& toCopy);
-    StatusType addGladiator(int glad_ID,int glad_lvl);
+
+    Trainer(const Trainer &toCopy);
+
+    StatusType addGladiator(int glad_ID, int glad_lvl);
+
     StatusType freeGladiator(int glad_ID);
-    StatusType lvlUpGladiator(int glad_ID,int lvlincrease);
-    Gladiator* getTopGladiator();
+
+    StatusType lvlUpGladiator(int glad_ID, int lvlincrease);
+
+    Gladiator *getTopGladiator() const;
+
+    int getTrainerID() const;
 
 };
 

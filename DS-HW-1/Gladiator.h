@@ -18,7 +18,7 @@ class Gladiator {
 public:
     Gladiator(int ID, int trainerID, int level);
 
-    ~Gladiator() = default;
+    //~Gladiator();
 
     Gladiator(const Gladiator &glad);
 
@@ -26,7 +26,7 @@ public:
 
     StatusType LevelUp(int levelincrease);
 
-    int GetLevel();
+    int GetLevel() const;
 
     StatusType ChangeID(int new_ID);
 
@@ -34,12 +34,34 @@ public:
 
 
 };
-class CompareByID{
+
+class CompareByID {
 
 public:
-    explicit CompareByID(){}
-    int operator()(const Gladiator& glad1, const Gladiator& glad2) const {
-        return (glad1.GetID()==glad2.GetID());
+    explicit CompareByID() {}
+
+    int operator()(const Gladiator &glad1, const Gladiator &glad2) const {
+        return (glad1.GetID() == glad2.GetID());
+    }
+};
+
+class CompareByLevel {
+
+public:
+    explicit CompareByLevel() {}
+
+    int operator()(const Gladiator &glad1, const Gladiator &glad2) const {
+        //WE CANNOT ALLOW IDENTICALS IDS
+        if (glad1.GetID() == glad2.GetID()) {
+            return 0;
+        }//Gladiators doesnt have same level
+        else if (glad1.GetLevel() != glad2.GetLevel()) {
+            return glad2.GetLevel() - glad1.GetLevel();
+        }//Gladiators have same lvl, Its would be difficult to understand logic
+            //in the following line but its OK
+        else{
+            return glad1.GetID()-glad2.GetID();
+        }
     }
 };
 
