@@ -41,7 +41,7 @@ public:
     explicit CompareByID() {}
 
     int operator()(const Gladiator &glad1, const Gladiator &glad2) const {
-        return (glad1.GetID() == glad2.GetID());
+        return (glad2.GetID()-glad1.GetID());
     }
 };
 

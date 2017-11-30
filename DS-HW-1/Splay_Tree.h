@@ -295,15 +295,16 @@ public:
     * Return Values: The maximum key
     */
     template <class Compare>
-    void Find_Max(const Compare& compare) {
+    T* Find_Max(const Compare& compare) {
         if (this->root == nullptr) {
-            return ;
+            return nullptr;
         }
         Vertex<T> *current = this->root;
         while (current->right != nullptr) {
             current = current->right;
         }
         this->root=splay(this->root, current->data,compare);
+        return (&(this->root->data));
     }
 
     /* Description:   This function inserts new data  with a given

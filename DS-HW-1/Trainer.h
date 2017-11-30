@@ -16,7 +16,7 @@ class Trainer {
     int ID;
     int number_of_gladiators;
     SplayTree<Gladiator> glad_tree;
-    Gladiator *best_gladiator;
+    int best_gladiator_ID;
 public:
     Trainer(int ID);
 
@@ -26,11 +26,12 @@ public:
 
     StatusType addGladiator(int glad_ID, int glad_lvl);
 
-    StatusType freeGladiator(int glad_ID);
+    //Because we maintain order through lvls we have to know glads_lvl
+    StatusType freeGladiator(int glad_ID,int glad_lvl);
 
-    StatusType lvlUpGladiator(int glad_ID, int lvlincrease);
+    StatusType lvlUpGladiator(int glad_ID,int glad_lvl, int lvlincrease);
 
-    Gladiator *getTopGladiator() const;
+    int getTopGladiatorID() const;
 
     int getTrainerID() const;
 
