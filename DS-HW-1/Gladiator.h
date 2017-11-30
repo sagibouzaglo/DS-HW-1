@@ -9,5 +9,17 @@
 #ifndef Gladiator_h
 #define Gladiator_h
 
+class Gladiator {
+    int ID;
+    int trainerID;
+    int level;
+public:
+    Gladiator(int ID, int trainerID, int level) : ID(ID), trainerID(trainerID),
+                                                  level(level) {}
+    ~Gladiator()= default;
+    Gladiator(const Gladiator& glad){}
+
+};
+
 
 #endif /* Gladiator_h */

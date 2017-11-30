@@ -25,23 +25,21 @@ class SplayTree {
     template<class N>
     class Vertex {
         N data;
-        int key;
         Vertex<N> *left;
         Vertex<N> *right;
         friend class SplayTree;
 
     public:
-        Vertex<N>(const T &data, int key) : data(data), key(key),
+        Vertex<N>(const T &data) : data(data),
                                             left(nullptr),
                                             right(nullptr) {}
 
-        Vertex<N>(const T &data, int key, Vertex<T> *left, Vertex<T> *right) :
-                data(data), key(key), left(left), right(right) {}
+        Vertex<N>(const T &data, Vertex<T> *left, Vertex<T> *right) :
+                data(data), left(left), right(right) {}
 
         ~Vertex<N>() = default;
 
         Vertex<N>(const Vertex<T> &node) : data(node.data),
-                                           key(node.key),
                                            left(node.left),
                                            right(node.right) {}
 
@@ -84,28 +82,31 @@ class SplayTree {
     /* Description:   This function returns the pointer to newly assigned root
      *                 if key was found then he will be the new root,if not
      *                 it makes the root the last accessed node while searching
-    * Input:         current root
+    * Input:         current root,the data to check with,Function object compare
+     *               that should give 1 if second arg is bigger 0 if equal and
+     *               -1 if first arg is bigger.
     * Output:        None.
     * Return Values: A pointer to the new root
     */
-    Vertex<T> *splay(Vertex<T> *root, int key) {
+    template <class Compare>
+    Vertex<T> *splay(Vertex<T> *root,const T& check, const Compare& compare) {
         //root is NULL or key is in root
-        if (root == nullptr || root->key == key) return root;
+        if (root == nullptr || !(compare(root->data,check)) ) return root;
 
         //Key is in right tree
-        if (key > root->key) {
+        if ((compare(root->data,check)>0)) {
             //Couldnt find key in tree, return the last known root
             if (root->right == nullptr) return root;
             /*RR-Zag-Zag rotation*/
-            if (key > root->right->key) {
+            if ((compare(root->right->data,check)>0)) {
                 //Make key the new Right_Right
-                root->right->right = splay(root->right->right, key);
+                root->right->right = splay(root->right->right,check,compare);
                 //Rotate top_down, second rotation will follow
                 root = leftRotate(root);
                 //RL-Zag-Zig roatation
-            } else if (key < root->right->key) {
+            } else if ((compare(root->right->data,check)<0)) {
                 //Make key the new Right_Left child
-                root->right->left = splay(root->right->left, key);
+                root->right->left = splay(root->right->left,check,compare);
                 //Make key the Right_child
                 if (root->right->left != nullptr) {
                     root->right = rightRotate(root->right);
@@ -119,14 +120,14 @@ class SplayTree {
             //Couldnt find key in tree, return the last known root
             if (root->left == nullptr) return root;
             /*LL-Zig-Zig rotatation */
-            if (key < root->left->key) {
+            if ((compare(root->left->data,check)<0)) {
                 //make Key the new L_L child
-                root->left->left = splay(root->left->left, key);
+                root->left->left = splay(root->left->left,check,compare);
                 root = rightRotate(root);
             }
                 /*LR-Zig-Zag rotatation */
-            else if (key > root->left->key) {
-                root->left->right = splay(root->left->right, key);
+            else if ((compare(root->left->data,check)>0)) {
+                root->left->right = splay(root->left->right,check,compare);
                 if (root->left->right != nullptr) {
                     root->left = leftRotate(root->left);
                 }
@@ -145,21 +146,22 @@ class SplayTree {
     * Output:        None.
     * Return Values: false if key wasnt found, true if key is in tree
     */
-    bool split(Vertex<T> *root, Vertex<T> *&left, Vertex<T> *&right, int key) {
+    template <class Compare>
+    bool split(Vertex<T> *root, Vertex<T> *&left, Vertex<T> *&right,const T& check, const Compare& compare) {
         if (root == nullptr) {
             return false;
         }
         //splay to the root
-        root=splay(root, key);
+        root=splay(root,check,compare);
         //root is smaller then key
-        if (root->key < key) {
+        if ((compare(root->data,check)>0)) {
             right = root->right;
             left = root;
             left->right = nullptr;
             return false;
         }
             //root is bigger than key
-        else if (root->key > key) {
+        else if ((compare(root->data,check)<0)) {
             left = root->left;
             right = root;
             right->left = nullptr;
@@ -167,6 +169,7 @@ class SplayTree {
         }
             //root equals key
         else {
+            this->root=root;
             left = root->left;
             right = root->right;
             return true;
@@ -179,13 +182,14 @@ class SplayTree {
     * Output:        None.
     * Return Values: None.
     */
-    Vertex<T>* join(Vertex<T>* T1,Vertex<T>* T2) {
+    template <class Compare>
+    Vertex<T>* join(Vertex<T>* T1,Vertex<T>* T2, const Compare& compare) {
         SplayTree<T>* tree1=new SplayTree<T>(T1);
         SplayTree<T>* tree2=new SplayTree<T>(T2);
         Vertex<T>* new_root;
 
-        tree1->Find_Max();
-        tree2->Find_Min();
+        tree1->Find_Max(compare);
+        tree2->Find_Min(compare);
         if(tree1->root!= nullptr) {
             tree1->root->right = tree2->root;
             new_root=tree1->root;
@@ -196,12 +200,12 @@ class SplayTree {
         delete tree2;
         return new_root;
     }
-
-    void inOrderTraversal(Vertex<T>* root){
+    template <class Function>
+    void inOrderTraversal(Vertex<T>* root, const Function& func){
         if(root== nullptr) return;
-        inOrderTraversal(root->left);
-        std::cout <<root->key<<" ";
-        inOrderTraversal(root->right);
+        inOrderTraversal(root->left,func);
+        func(root->data);
+        inOrderTraversal(root->right,func);
         return;
     }
 
@@ -222,12 +226,13 @@ public:
     * Return Values: true if key was found
      *               false if not
     */
-    bool Search(int key) {
+    template <class Compare>
+    bool Search(const T& toCheck, const Compare& compare) {
         if (this->root == nullptr) {
             return false;
         }
-        this->root= splay(this->root, key);
-        return (this->root->key == key);
+        this->root= splay(this->root,toCheck,compare);
+        return compare(root->data,toCheck)==0 ;
     }
 
     /* Description:   This function returns the minimum key
@@ -236,16 +241,16 @@ public:
     * Exceptions:    TreeIsEmpty- if this is an empty tree
     * Return Values: The minimum key
     */
-    int Find_Min() {
+    template <class Compare>
+    void Find_Min(const Compare& compare) {
         if (this->root == nullptr) {
-            return -1;
+            return ;
         }
         Vertex<T> *current = this->root;
         while (current->left != nullptr) {
             current = current->left;
         }
-        this->root=splay(this->root, current->key);
-        return this->root->key;
+        this->root=splay(this->root, current->data,compare);
     }
 
     /* Description:   This function returns the maximum key
@@ -254,16 +259,16 @@ public:
     * Exceptions:    TreeIsEmpty- if this is an empty tree
     * Return Values: The maximum key
     */
-    int Find_Max() {
+    template <class Compare>
+    void Find_Max(const Compare& compare) {
         if (this->root == nullptr) {
-            return -1;
+            return ;
         }
         Vertex<T> *current = this->root;
         while (current->right != nullptr) {
             current = current->right;
         }
-        this->root=splay(this->root, current->key);
-        return this->root->key;
+        this->root=splay(this->root, current->data,compare);
     }
 
     /* Description:   This function inserts new data  with a given
@@ -275,19 +280,20 @@ public:
     * Return Values: true-if insert succeded
      *               false if not
     */
-    bool Insert(int key, const T &data) {
+    template <class Compare>
+    bool Insert(const T &data, const Compare& compare) {
         if (this->root == nullptr) {
-            this->root=new Vertex<T>(data,key);
+            this->root=new Vertex<T>(data);
             return true;
         }
         Vertex<T> *right, *left;
         //Key wasnt found
-        if (!(split(this->root, left, right, key))) {
-            Vertex<T>* new_root=new Vertex<T>(data,key,left,right);
+        if (!(split(this->root, left, right, data,compare))) {
+            Vertex<T>* new_root=new Vertex<T>(data,left,right);
             this->root=new_root;
             return true;
         }
-        //Key exists
+            //Key exists
         else{
             return false;
         }
@@ -300,24 +306,25 @@ public:
     * Exceptions:    KeyDoesntExists if the given key doesnt exists
     * Return Values: None
 */
-    bool Delete(int key) {
+    template <class Compare>
+    bool Delete(const T& data,const Compare& compare) {
         if(this->root== nullptr){
             return false;
         }
         //key was found
-            if(this->Search(key)){
-                Vertex<T>* toDelete=this->root;
-                this->root=join(this->root->left,this->root->right);
-                delete toDelete;
-                return true;
-            }
+        if(this->Search(data,compare)){
+            Vertex<T>* toDelete=this->root;
+            this->root=join(this->root->left,this->root->right,compare);
+            delete toDelete;
+            return true;
+        }
         else{
-                return false;
-            }
+            return false;
+        }
     }
-
-    void InOrderPrint(){
-        inOrderTraversal(this->root);
+    template <class Function>
+    void InOrderPrint(const Function& func){
+        inOrderTraversal(this->root,func);
     }
 
 
