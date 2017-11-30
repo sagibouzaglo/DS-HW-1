@@ -82,7 +82,9 @@ class SplayTree {
     /* Description:   This function returns the pointer to newly assigned root
      *                 if key was found then he will be the new root,if not
      *                 it makes the root the last accessed node while searching
-    * Input:         current root,the data to check with,Function object compare
+    * Input:         1)current root
+     *               2)the data to compare to
+     *               3)Function object "compare" function-
      *               that should give 1 if second arg is bigger 0 if equal and
      *               -1 if first arg is bigger.
     * Output:        None.
@@ -139,10 +141,13 @@ class SplayTree {
 
     /* Description:   This function splits root to 2 trees around a given
     *  key.
-    * Input:           The root you want to split
-     *              The key around to split, pointer to aftermath left_root.
-     *              ,pointer to aftermath right_root
-    *               2 pointers for the left and right tree
+    * Input:         1)The root you want to split
+     *               2)the data to compare to
+     *               3)Function object "compare" function-
+     *               that should give 1 if second arg is bigger 0 if equal and
+     *               -1 if first arg is bigger.
+     *               4)pointer to aftermath left_root.
+     *              5)pointer to aftermath right_root
     * Output:        None.
     * Return Values: false if key wasnt found, true if key is in tree
     */
@@ -178,9 +183,13 @@ class SplayTree {
 
     /* Description:   This function joins "this" tree with a "BiggerTree"
      * meaning all keys in "BiggerTree" are bigger then all keys in "this" Tree
-    * Input:         The "Bigger Tree" to join
+    * Input:         1) A vertex pointer for the left tree
+     *               2) A vertex pointer for the right tree
+     *               3)Function object "compare" function-
+     *               that should give 1 if second arg is bigger 0 if equal and
+     *               -1 if first arg is bigger.
     * Output:        None.
-    * Return Values: None.
+    * Return Values: new root pointer.
     */
     template <class Compare>
     Vertex<T>* join(Vertex<T>* T1,Vertex<T>* T2, const Compare& compare) {
@@ -200,6 +209,14 @@ class SplayTree {
         delete tree2;
         return new_root;
     }
+    /* Description:   This function does an InOrder Traversal on a given root
+     *                and use the function that is given on each vertex
+* Input:         1) to root to start from
+ *               2)Function object "function" function-
+ *               that should do whatever you want on a given data
+* Output:        None.
+* Return Values: None.
+*/
     template <class Function>
     void inOrderTraversal(Vertex<T>* root, const Function& func){
         if(root== nullptr) return;
