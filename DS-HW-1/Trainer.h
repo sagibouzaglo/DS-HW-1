@@ -35,6 +35,18 @@ public:
 
     int getTrainerID() const;
 
+    StatusType getAllGladiatorsByLevel(int ** gladiators, int* numberofgladiators);
+
 };
+
+class  CompareTrainer{
+
+explicit CompareTrainer() {}
+
+int operator()(const Trainer &trainer1, const Trainer &trainer2) const {
+    return (trainer2.getTrainerID()-trainer1.getTrainerID());
+}
+};
+
 
 #endif /* Trainer_h */

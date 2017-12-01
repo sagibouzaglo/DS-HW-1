@@ -71,5 +71,24 @@ int Trainer::getTopGladiatorID() const {
 int Trainer::getTrainerID() const {
     return this->ID;
 }
+/**---------------------------------------------------------------------------*/
+class  CopyGladiatorID{
+    int* arr;
+    int i;
+public:
+    explicit CopyGladiatorID(int* arr):arr(arr),i(0){}
 
+    void operator()( Gladiator &glad)   {
+        arr[i]=glad.GetID();
+        i++;
+    }
+};
+
+StatusType Trainer::getAllGladiatorsByLevel(int **gladiators,
+                                            int *numberofgladiators) {
+    *numberofgladiators=this->number_of_gladiators;
+    *gladiators=(int*)malloc(sizeof(int)*this->number_of_gladiators);
+    CopyGladiatorID func(*gladiators);
+    this->glad_tree.BackwardsInOrder(func);
+}
 

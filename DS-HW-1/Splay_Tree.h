@@ -227,13 +227,24 @@ class SplayTree {
 * Return Values: None.
 */
     template <class Function>
-    void inOrderTraversal(Vertex<T>* root, const Function& func){
+    void inOrderTraversal(Vertex<T>* root, Function& func){
         if(root== nullptr) return;
         inOrderTraversal(root->left,func);
         func(root->data);
         inOrderTraversal(root->right,func);
         return;
     }
+
+    template <class Function>
+    void BackwardsinOrderTraversal(Vertex<T>* root, Function& func){
+        if(root== nullptr) return;
+        BackwardsinOrderTraversal(root->right,func);
+        func(root->data);
+        BackwardsinOrderTraversal(root->left,func);
+        return;
+    }
+
+
     void postOrderDemolition(Vertex<T>* root){
         if(root== nullptr){
             return;
@@ -359,8 +370,13 @@ public:
         }
     }
     template <class Function>
-    void InOrder(const Function& func){
+    void InOrder(Function& func){
         inOrderTraversal(this->root,func);
+    }
+
+    template <class Function>
+    void BackwardsInOrder(Function& func){
+        BackwardsinOrderTraversal(this->root,func);
     }
 
     T& GetRoot(){
