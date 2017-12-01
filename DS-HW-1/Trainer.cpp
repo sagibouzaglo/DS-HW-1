@@ -83,7 +83,7 @@ public:
         i++;
     }
 };
-
+/**---------------------------------------------------------------------------*/
 StatusType Trainer::getAllGladiatorsByLevel(int **gladiators,
                                             int *numberofgladiators) {
     *numberofgladiators=this->number_of_gladiators;
