@@ -32,23 +32,26 @@ public:
 
     StatusType LevelMultiply(int factor);
 
+    int GetTrainerID() const;
+
+
 
 };
 
-class CompareByID {
+class CompareGladiatorByID {
 
 public:
-    explicit CompareByID() {}
+    explicit CompareGladiatorByID() {}
 
     int operator()(const Gladiator &glad1, const Gladiator &glad2) const {
         return (glad2.GetID()-glad1.GetID());
     }
 };
 
-class CompareByLevel {
+class CompareGladiatorByLevel {
 
 public:
-    explicit CompareByLevel() {}
+    explicit CompareGladiatorByLevel() {}
 
     int operator()(const Gladiator &glad1, const Gladiator &glad2) const {
         //WE CANNOT ALLOW IDENTICALS IDS

@@ -15,9 +15,9 @@ Trainer::Trainer(const Trainer &toCopy):ID(toCopy.ID),number_of_gladiators(toCop
 StatusType Trainer::addGladiator(int glad_ID, int glad_lvl) {
     Gladiator* temp_glad=new Gladiator(glad_ID,this->ID,glad_lvl);
     //If there is no such GLAD_ID
-    if(!(this->glad_tree.Search(*(temp_glad),CompareByLevel()))){
-        this->glad_tree.Insert(*temp_glad,CompareByLevel());
-        this->glad_tree.Find_Max(CompareByLevel());
+    if(!(this->glad_tree.Search(*(temp_glad),CompareGladiatorByLevel()))){
+        this->glad_tree.Insert(*temp_glad,CompareGladiatorByLevel());
+        this->glad_tree.Find_Max(CompareGladiatorByLevel());
         this->best_gladiator_ID=this->glad_tree.GetRoot().GetID();
         this->number_of_gladiators++;
         delete temp_glad;
@@ -33,9 +33,9 @@ StatusType Trainer::addGladiator(int glad_ID, int glad_lvl) {
 /**---------------------------------------------------------------------------*/
 StatusType Trainer::freeGladiator(int glad_ID,int glad_lvl) {
     Gladiator* temp_glad=new Gladiator(glad_ID,this->ID,glad_lvl);
-    if(this->glad_tree.Search(*(temp_glad),CompareByLevel())){
-        this->glad_tree.Delete(*temp_glad,CompareByLevel());
-        this->glad_tree.Find_Max(CompareByLevel());
+    if(this->glad_tree.Search(*(temp_glad),CompareGladiatorByLevel())){
+        this->glad_tree.Delete(*temp_glad,CompareGladiatorByLevel());
+        this->glad_tree.Find_Max(CompareGladiatorByLevel());
         this->best_gladiator_ID=this->glad_tree.GetRoot().GetID();
         delete temp_glad;
         this->number_of_gladiators--;
@@ -49,9 +49,9 @@ StatusType Trainer::freeGladiator(int glad_ID,int glad_lvl) {
 /**---------------------------------------------------------------------------*/
 StatusType Trainer::lvlUpGladiator(int glad_ID,int glad_lvl, int lvlincrease) {
     Gladiator* temp_glad=new Gladiator(glad_ID,this->ID,glad_lvl);
-    if(this->glad_tree.Search(*(temp_glad),CompareByLevel())){
+    if(this->glad_tree.Search(*(temp_glad),CompareGladiatorByLevel())){
         this->glad_tree.GetRoot().LevelUp(lvlincrease);
-        this->glad_tree.Find_Max(CompareByLevel());
+        this->glad_tree.Find_Max(CompareGladiatorByLevel());
         this->best_gladiator_ID=this->glad_tree.GetRoot().GetID();
         delete temp_glad;
         return SUCCESS;
@@ -85,7 +85,7 @@ public:
 };
 /**---------------------------------------------------------------------------*/
 StatusType Trainer::getAllGladiatorsByLevel(int **gladiators,
-                                            int *numberofgladiators) {
+                                            int *numberofgladiators){
     *numberofgladiators=this->number_of_gladiators;
     *gladiators=(int*)malloc(sizeof(int)*this->number_of_gladiators);
     CopyGladiatorID func(*gladiators);

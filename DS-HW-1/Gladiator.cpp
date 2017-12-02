@@ -31,7 +31,11 @@ StatusType Gladiator::LevelMultiply(int factor) {
     this->level=this->level*factor;
     return SUCCESS;
 }
-
+/**---------------------------------------------------------------------------*/
 int Gladiator::GetID() const{
     return this->ID;
+}
+/**---------------------------------------------------------------------------*/
+int Gladiator::GetTrainerID() const {
+    return this->trainerID;
 }

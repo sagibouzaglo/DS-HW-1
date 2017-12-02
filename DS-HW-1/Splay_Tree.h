@@ -263,12 +263,12 @@ public:
 
     SplayTree<T>(const SplayTree<T> &toCopy) : root(toCopy.root) {}///////////////////////////////////////////////
 
-    /* Description:   This function returns the data in the indicated key if
-     * found
-    * Input:         the wanted key
+    /* Description:   This function Searches for a given data in the tree
+    * Input:         The data to find
+     *               Compare function for data 1 and 2, should return
+     *               1 if second arg is bigger, -1 if first arg is bigger,
+     *               0 if first and second arg are equal
     * Output:        None.
-    * Exceptions:    KeynotFound- if the given key wasnt found
-    *               TreeIsEmpty- if this is an empty tree
     * Return Values: true if key was found
      *               false if not
     */

@@ -40,7 +40,7 @@ public:
 };
 
 class  CompareTrainer{
-
+public:
 explicit CompareTrainer() {}
 
 int operator()(const Trainer &trainer1, const Trainer &trainer2) const {
