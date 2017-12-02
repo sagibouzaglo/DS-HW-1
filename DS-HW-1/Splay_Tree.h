@@ -346,12 +346,13 @@ public:
         }
     }
 
-    /* Description:   This function deletes the given key from the S_T
-     * Input:         Data to be saved
-    *               key in dictionary
+    /* Description:   This function deletes the given DATA from the S_T
+    * Input:         Data to be deleted
+     *              Compare function
     * Output:        None.
-    * Exceptions:    KeyDoesntExists if the given key doesnt exists
-    * Return Values: None
+    * Exceptions:    KeyDoesntExists if the given key doesnt exist
+    * Return Values: true- if the data was found and deleted
+     *               false- if data wasnt found
 */
     template <class Compare>
     bool Delete(const T& data,const Compare& compare) {

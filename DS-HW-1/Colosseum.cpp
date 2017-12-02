@@ -5,6 +5,18 @@
 #define RANDOM_LVL 7
 #define RANDOM_TRAINER 7
 
+
+bool Colosseum::update_sys_best(int glad_ID, int glad_Lvl) {
+    if(this->best_glad_lvl>glad_Lvl){
+        return false;
+    }
+    if(this->best_glad_lvl<glad_Lvl || this->best_glad_ID>glad_ID){
+        this->best_glad_lvl=glad_Lvl;
+        this->best_glad_ID=glad_ID;
+        return true;
+    }
+    return false;
+}
 /**---------------------------------------------------------------------------*/
 StatusType Colosseum::AddTrainer(int trainerID) {
     if (trainerID <= 0) {
@@ -12,10 +24,8 @@ StatusType Colosseum::AddTrainer(int trainerID) {
     }
     Trainer new_trainer(trainerID);
     if (this->trainers_tree.Insert(new_trainer, CompareTrainer())) {
-        delete &new_trainer;
         return SUCCESS;
     } else {
-        delete &new_trainer;
         return FAILURE;
     }
 }
@@ -29,21 +39,18 @@ StatusType Colosseum::BuyGladiator(int gladID, int trainerID, int gladlvl) {
     //If the trainers ID exists
     if(this->trainers_tree.Search(trainer,CompareTrainer())){
         Gladiator gladiator(gladID,trainerID,gladlvl);
-        //Try inserting the new glad to the system
+        //Try inserting the new glad to the system's ID_tree
         if(this->glad_ID_tree.Insert(gladiator,CompareGladiatorByID())){
             //insert to lvls tree
             this->glad_lvl_tree.Insert(gladiator,CompareGladiatorByLevel());
             //insert to the trainers tree
             this->trainers_tree.GetRoot().addGladiator(gladID,gladlvl);
             //update system's best glad's
-            this->best_glad_ID=this->glad_lvl_tree.Find_Max(CompareGladiatorByLevel())->GetID();
-            delete &trainer,&gladiator;
+            this->update_sys_best(gladID,gladlvl);
             this->NumberOfGladiators++;
             return SUCCESS;
         }
-        delete &gladiator;
     }
-    delete &trainer;
     return FAILURE;
 }
 /**---------------------------------------------------------------------------*/
@@ -54,30 +61,97 @@ StatusType Colosseum::FreeGladiator(int gladID) {
     Gladiator gladiator(gladID,RANDOM_TRAINER,RANDOM_LVL);
     //Search for the given gladiator's ID
     if(this->glad_ID_tree.Search(gladiator,CompareGladiatorByID())){
-        //If we reached this point the gladiator exists in the system;
-        delete &gladiator;
-        //Make a copy of the gladiator we wish to remove, and the trainer to
-        //remove him from
-        Gladiator glad_cpy(gladID,this->glad_ID_tree.GetRoot().GetTrainerID(),
-                             this->glad_ID_tree.GetRoot().GetLevel());
+        this->NumberOfGladiators--;
+        Gladiator glad_cpy(gladID,this->glad_ID_tree.GetRoot().GetTrainerID(),this->glad_ID_tree.GetRoot().GetLevel());
         Trainer trainer_cpy(glad_cpy.GetTrainerID());
-        //Remove from lvl_tree
         this->glad_lvl_tree.Delete(glad_cpy,CompareGladiatorByLevel());
+        if(this->best_glad_ID==gladID){
+            if(this->NumberOfGladiators==0){
+                this->best_glad_ID=-1;
+                this->best_glad_lvl=0;
+            } else{
+                this->glad_lvl_tree.Find_Max(CompareGladiatorByLevel());
+                this->best_glad_ID=this->glad_lvl_tree.GetRoot().GetID();
+                this->best_glad_lvl=this->glad_lvl_tree.GetRoot().GetLevel();
+            }
+        }
         //Remove from ID_tree
         this->glad_ID_tree.Delete(glad_cpy,CompareGladiatorByID());
         //Remove from the wanted Trainer tree
         this->trainers_tree.Search(trainer_cpy,CompareTrainer());
         assert(this->trainers_tree.GetRoot().getTrainerID()==trainer_cpy.getTrainerID());
         this->trainers_tree.GetRoot().freeGladiator(glad_cpy.GetID(),glad_cpy.GetLevel());
-        //Update Best gladiator in the system
-        this->best_glad_ID=this->glad_lvl_tree.Find_Max(CompareGladiatorByLevel())->GetID();
+
         //Finished updating everything
-        delete &glad_cpy,&trainer_cpy;
-        this->NumberOfGladiators--;
         return SUCCESS;
 
     }
     //The gladiator doesnt exist in the system
-    delete &gladiator;
     return FAILURE;
+}
+/**---------------------------------------------------------------------------*/
+StatusType Colosseum::LevelUp(int gladiatorID, int levelIncrease){
+    if(gladiatorID<=0 || levelIncrease<=0){
+        return INVALID_INPUT;
+    }
+    Gladiator gladiator(gladiatorID,RANDOM_TRAINER,RANDOM_LVL);
+    if(this->glad_ID_tree.Search(gladiator,CompareGladiatorByID())){
+        //If we reached this point the gladiator exists in the system
+        Gladiator glad_cpy(gladiatorID,this->glad_ID_tree.GetRoot().GetTrainerID(),
+        this->glad_ID_tree.GetRoot().GetLevel());
+        //Remove gladiator from system
+        this->FreeGladiator(gladiatorID);
+        //Add the "new" gladiator to the system
+        this->BuyGladiator(glad_cpy.GetID(),glad_cpy.GetTrainerID(),glad_cpy.GetLevel()+levelIncrease);
+        return SUCCESS;
+    }
+    //Gladiator doesnt exist in system
+   // delete &gladiator;
+    return FAILURE;
+}
+/**---------------------------------------------------------------------------*/
+
+StatusType Colosseum::GetTopGladiator( int trainerID, int* gladiatorID){
+    if ((trainerID == 0) || (gladiatorID == nullptr)){
+        return INVALID_INPUT;
+    }
+    if (trainerID<0){
+        *gladiatorID=this->best_glad_ID;
+        return SUCCESS;
+    }
+    Trainer trainerCopy(trainerID);
+    //If the trainers ID exists
+    if(this->trainers_tree.Search(trainerCopy,CompareTrainer())){
+       *gladiatorID = this->trainers_tree.GetRoot().getTopGladiatorID();
+        return SUCCESS;
+    }
+    return FAILURE;
+}
+/**---------------------------------------------------------------------------*/
+
+StatusType Colosseum::GetAllGladiatorsByLevel(int trainerID, int **gladiators,
+                                              int *numOfGladiator) {
+
+    if(trainerID==0 || gladiators==nullptr||numOfGladiator==nullptr){
+        return INVALID_INPUT;
+    }
+    if(trainerID<0){
+        *numOfGladiator = this->NumberOfGladiators;
+        *gladiators = (int *) malloc(sizeof(int) * this->NumberOfGladiators);
+        CopyGladiatorID func(*gladiators);
+        this->glad_lvl_tree.BackwardsInOrder(func);
+        return SUCCESS;
+    } else{
+        Trainer trainer(trainerID);
+        if(this->trainers_tree.Search(trainer,CompareTrainer())){
+            this->trainers_tree.GetRoot().getAllGladiatorsByLevel(gladiators,numOfGladiator);
+            return SUCCESS;
+        } else{
+            return FAILURE;
+        }
+    }
+}
+/**---------------------------------------------------------------------------*/
+StatusType Colosseum::UpgradeGladiator(int gladiatorID, int upgradedID) {
+
 }

@@ -20,11 +20,12 @@ class Colosseum{
     SplayTree<Gladiator> glad_ID_tree;
     SplayTree<Trainer> trainers_tree;
     int best_glad_ID;
+    int best_glad_lvl;
     int NumberOfGladiators ;
 
-
+    bool update_sys_best(int glad_ID,int glad_Lvl);
 public:
-    Colosseum():best_glad_ID(0),NumberOfGladiators(0){}
+    Colosseum():best_glad_ID(-1),best_glad_lvl(0),NumberOfGladiators(0){}
     ~Colosseum(){
         delete &glad_ID_tree;
         delete &glad_lvl_tree;
@@ -65,5 +66,36 @@ public:
      *                FAILURE-if the given glad ID doesnt exist in the system
      */
     StatusType LevelUp(int gladiatorID, int levelIncrease);
+    /* Description:   This function return the top Gladiator of the trainer
+     *                  or system
+     * Input:         trainers ID
+     *                pointer to where the ID will be written
+     * Output:        None.
+     * Return Values: INVALID INPUT-trainer ID ==0 or gladiatorID==NULL
+     *                SUCCESS- if the glad was successfully retrieved
+     *                FAILURE-if the given trainer ID doesnt exist in the system
+     */
+    StatusType GetTopGladiator(int trainerID, int * gladiatorID);
+    /* Description:   This function returns All of a given trainer(or system)
+     *  gladiators sorted as requested
+     * Input:         trainers ID
+     *                pointer to where the gladiators IDs will be copied
+     *                pointer to where the number of gladiators will be copied
+     * Output:        None.
+     * Return Values: INVALID INPUT-trainer ID ==0 or pointers==NULL
+     *                SUCCESS- if the glad was successfully removed
+     *                FAILURE-if the given trainer ID doesnt exist in the system
+     */
+    StatusType GetAllGladiatorsByLevel(int trainerID, int **gladiators, int *numOfGladiator);
+
+    /* Description:   This function changes a given gladiator's ID
+     * Input:         gladiator current ID
+     *                gladiator future ID
+     * Output:        None.
+     * Return Values: INVALID INPUT-trainer one of the outputs<=0
+     *                SUCCESS- if the glad ID was successfully changed
+     *                FAILURE-no Such gladiatorID or upgradedID already found
+     */
+    StatusType UpgradeGladiator(int gladiatorID, int upgradedID);
 };
 #endif //DS_HW_1_COLOSSEUM_H

@@ -47,6 +47,34 @@ int main(){
     assert(colosseum->FreeGladiator(0)==INVALID_INPUT);
     assert(colosseum->FreeGladiator(MESSI)==SUCCESS);
     assert(colosseum->FreeGladiator(MESSI)==FAILURE);
+    /** Check Colosseum_Gladiatorlvlup and Get-Top-----------------------------------------*/
+    assert(colosseum->BuyGladiator(MESSI,BARCA,GOD)==SUCCESS);
+    assert(colosseum->LevelUp(CR7,1)==SUCCESS);
+    int best;
+    assert(colosseum->GetTopGladiator(-1,&best)==0);
+    assert(best==7);
+    assert(colosseum->GetTopGladiator(1,&best)==SUCCESS);
+    assert(best==10);
+    assert(colosseum->GetTopGladiator(2,&best)==SUCCESS);
+    assert(best==31);
+    assert(colosseum->GetTopGladiator(3,&best)==SUCCESS);
+    assert(best==7);
+    assert(colosseum->GetTopGladiator(4,&best)==FAILURE);
+    assert(colosseum->GetTopGladiator(0,&best)==INVALID_INPUT);
+    assert(colosseum->GetTopGladiator(2,nullptr)==INVALID_INPUT);
+    colosseum->FreeGladiator(7);
+    assert(colosseum->GetTopGladiator(-1,&best)==SUCCESS);
+    assert(best==10);
+    assert(colosseum->GetTopGladiator(3,&best)==SUCCESS);
+    assert(best==11);
+    assert(colosseum->BuyGladiator(CR7,REAL,B_DOR)==SUCCESS);
+/** Check Colosseum_getAllbylvl-----------------------------------------*/
+    int numOfGlads,*gladiators;
+    assert(colosseum->GetAllGladiatorsByLevel(-1,&gladiators,&numOfGlads)==SUCCESS);
+    std::cout << "Printing gladiators:(ID)\n";
+    for(int i=0;i<numOfGlads;i++){
+        std::cout <<"("<< gladiators[i] <<") " ;
+    }
     int i=0;
     return 0;
 }

@@ -17,6 +17,9 @@ class Trainer {
     int number_of_gladiators;
     SplayTree<Gladiator> glad_tree;
     int best_gladiator_ID;
+    int best_gladiator_lvl;
+
+    bool best_update(int GladID,int GladLvl);
 public:
     Trainer(int ID);
 
@@ -35,6 +38,8 @@ public:
 
     int getTrainerID() const;
 
+    int getNumberOfGladiatoes() const;
+
     StatusType getAllGladiatorsByLevel(int ** gladiators, int* numberofgladiators);
 
 };
@@ -48,5 +53,17 @@ int operator()(const Trainer &trainer1, const Trainer &trainer2) const {
 }
 };
 
+/**---------------------------------------------------------------------------*/
+class CopyGladiatorID {
+    int *arr;
+    int i;
+public:
+    explicit CopyGladiatorID(int *arr) : arr(arr), i(0) {}
+
+    void operator()(Gladiator &glad) {
+        arr[i] = glad.GetID();
+        i++;
+    }
+};
 
 #endif /* Trainer_h */
