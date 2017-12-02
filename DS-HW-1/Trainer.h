@@ -38,9 +38,11 @@ public:
 
     int getTrainerID() const;
 
-    int getNumberOfGladiatoes() const;
+    int getNumberOfGladiators() const;
 
     StatusType getAllGladiatorsByLevel(int ** gladiators, int* numberofgladiators);
+
+    void UpgradeGladiator(const Gladiator& glad,int upgradedID);
 
 };
 

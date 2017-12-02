@@ -75,6 +75,20 @@ int main(){
     for(int i=0;i<numOfGlads;i++){
         std::cout <<"("<< gladiators[i] <<") " ;
     }
-    int i=0;
+    /** Check Colosseum::UpgradeGladiator-----------------------------------------*/
+    assert(colosseum->UpgradeGladiator(0,50)==INVALID_INPUT);
+    assert(colosseum->UpgradeGladiator(10,0)==INVALID_INPUT);
+    assert(colosseum->UpgradeGladiator(MESSI,99)==SUCCESS);
+    assert(colosseum->GetTopGladiator(-5,&best)==SUCCESS);
+    assert(best==99);
+    assert(colosseum->UpgradeGladiator(CR7,77)==SUCCESS);
+    assert(colosseum->GetTopGladiator(3,&best)==SUCCESS);
+    assert(best==77);
+    assert(colosseum->UpgradeGladiator(99,77)==FAILURE);
+    assert(colosseum->UpgradeGladiator(50,3)==FAILURE);
+    assert(colosseum->UpgradeGladiator(99,99)==FAILURE);
+    colosseum->UpgradeGladiator(99,MESSI);
+    colosseum->UpgradeGladiator(77,CR7);
+    /** Check Colosseum::UpgradeGladiator-----------------------------------------*/
     return 0;
 }

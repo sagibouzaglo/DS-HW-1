@@ -89,7 +89,7 @@ int Trainer::getTrainerID() const {
     return this->ID;
 }
 /**---------------------------------------------------------------------------*/
-int Trainer::getNumberOfGladiatoes() const{
+int Trainer::getNumberOfGladiators() const{
     return this->number_of_gladiators;
 }
 
@@ -102,5 +102,13 @@ StatusType Trainer::getAllGladiatorsByLevel(int **gladiators,
     *gladiators = (int *) malloc(sizeof(int) * this->number_of_gladiators);
     CopyGladiatorID func(*gladiators);
     this->glad_tree.BackwardsInOrder(func);
+    return SUCCESS;
 }
-
+/**---------------------------------------------------------------------------*/
+void Trainer::UpgradeGladiator(const Gladiator& glad,int upgradedID) {
+    this->glad_tree.Search(glad,CompareGladiatorByLevel());
+    this->glad_tree.GetRoot().ChangeID(upgradedID);
+    if(this->best_gladiator_ID==glad.GetID()){
+        this->best_gladiator_ID=upgradedID;
+    }
+}

@@ -153,5 +153,37 @@ StatusType Colosseum::GetAllGladiatorsByLevel(int trainerID, int **gladiators,
 }
 /**---------------------------------------------------------------------------*/
 StatusType Colosseum::UpgradeGladiator(int gladiatorID, int upgradedID) {
+    if(gladiatorID <=0 || upgradedID<=0){
+        return INVALID_INPUT;
+    }
+    if(gladiatorID==upgradedID){
+        return FAILURE;
+    }
+    Gladiator Upglad(upgradedID,RANDOM_TRAINER,RANDOM_LVL);
+    //Find if there is no gladiator with upgradedID
+    if(!(this->glad_ID_tree.Search(Upglad,CompareGladiatorByID()))){
+        //Find if therE IS a gladiator with gladID
+        Gladiator gladiator(gladiatorID,RANDOM_TRAINER,RANDOM_LVL);
+        if(this->glad_ID_tree.Search(gladiator,CompareGladiatorByID())){
+            //Make a cpy of the glad to upgrade
+            Gladiator Glad_Cpy(gladiatorID,this->glad_ID_tree.GetRoot().GetTrainerID(),
+            this->glad_ID_tree.GetRoot().GetLevel());
 
+            //Change in ID tree
+            this->glad_ID_tree.GetRoot().ChangeID(upgradedID);
+            //Change in lvl_tree
+            this->glad_lvl_tree.Search(Glad_Cpy,CompareGladiatorByLevel());
+            this->glad_lvl_tree.GetRoot().ChangeID(upgradedID);
+            if(this->best_glad_ID==gladiatorID){
+                this->best_glad_ID=upgradedID;
+            }
+            //Change in trainer's tree
+            Trainer trainer(Glad_Cpy.GetTrainerID());
+            this->trainers_tree.Search(trainer,CompareTrainer());
+            this->trainers_tree.GetRoot().UpgradeGladiator(Glad_Cpy,upgradedID);
+            return SUCCESS;
+        }
+        return FAILURE;
+    }
+    return FAILURE;
 }
