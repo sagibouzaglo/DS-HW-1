@@ -49,12 +49,21 @@ public:
     */
     StatusType BuyGladiator(int gladID,int trainerID,int gladlvl);
     /* Description:   This function removes a Gladiator from the system
-     * Input:         Glad's ID;
+     * Input:         Glad's ID
      * Output:        None.
      * Return Values: INVALID INPUT-if the given id was <=0
      *                SUCCESS- if the glad was successfully removed
      *                FAILURE-if the given glad ID doesnt exist in the system
      */
     StatusType FreeGladiator(int gladID);
+    /* Description:   This function levels up a Gladiator from the system
+     * Input:         Glad's ID
+     *                The number of lvls to be increased
+     * Output:        None.
+     * Return Values: INVALID INPUT-if the given id was <=0
+     *                SUCCESS- if the glad was successfully removed
+     *                FAILURE-if the given glad ID doesnt exist in the system
+     */
+    StatusType LevelUp(int gladiatorID, int levelIncrease);
 };
 #endif //DS_HW_1_COLOSSEUM_H
