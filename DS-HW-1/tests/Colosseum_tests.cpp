@@ -43,10 +43,10 @@ int main(){
     assert(colosseum->BuyGladiator(RASHFORD,MANU,AVG)==SUCCESS);
     assert(colosseum->BuyGladiator(SUAREZ,BARCA,AVG)==SUCCESS);
     assert(colosseum->BuyGladiator(BALE,REAL,AVG)==SUCCESS);
-    colosseum->BuyGladiator(BALE,REAL,AVG);
-    //
-    int i=1;
-    i++;
-    i--;
+    /** Check Colosseum_FreeGladiator-----------------------------------------*/
+    assert(colosseum->FreeGladiator(0)==INVALID_INPUT);
+    assert(colosseum->FreeGladiator(MESSI)==SUCCESS);
+    assert(colosseum->FreeGladiator(MESSI)==FAILURE);
+    int i=0;
     return 0;
 }
