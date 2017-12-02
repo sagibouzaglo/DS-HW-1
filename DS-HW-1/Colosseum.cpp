@@ -12,10 +12,10 @@ StatusType Colosseum::AddTrainer(int trainerID) {
     }
     Trainer new_trainer(trainerID);
     if (this->trainers_tree.Insert(new_trainer, CompareTrainer())) {
-        delete new_trainer;
+        delete &new_trainer;
         return SUCCESS;
     } else {
-        delete new_trainer;
+        delete &new_trainer;
         return FAILURE;
     }
 }
@@ -37,13 +37,13 @@ StatusType Colosseum::BuyGladiator(int gladID, int trainerID, int gladlvl) {
             this->trainers_tree.GetRoot().addGladiator(gladID,gladlvl);
             //update system's best glad's
             this->best_glad_ID=this->glad_lvl_tree.Find_Max(CompareGladiatorByLevel())->GetID();
-            delete trainer;
-            delete gladiator;
+            delete &trainer,&gladiator;
+            this->NumberOfGladiators++;
             return SUCCESS;
         }
-        delete gladiator;
+        delete &gladiator;
     }
-    delete trainer;
+    delete &trainer;
     return FAILURE;
 }
 /**---------------------------------------------------------------------------*/
@@ -55,7 +55,7 @@ StatusType Colosseum::FreeGladiator(int gladID) {
     //Search for the given gladiator's ID
     if(this->glad_ID_tree.Search(gladiator,CompareGladiatorByID())){
         //If we reached this point the gladiator exists in the system;
-        delete gladiator;
+        delete &gladiator;
         //Make a copy of the gladiator we wish to remove, and the trainer to
         //remove him from
         Gladiator glad_cpy(gladID,this->glad_ID_tree.GetRoot().GetTrainerID(),
@@ -72,11 +72,12 @@ StatusType Colosseum::FreeGladiator(int gladID) {
         //Update Best gladiator in the system
         this->best_glad_ID=this->glad_lvl_tree.Find_Max(CompareGladiatorByLevel())->GetID();
         //Finished updating everything
-        delete glad_cpy,trainer_cpy;
+        delete &glad_cpy,&trainer_cpy;
+        this->NumberOfGladiators--;
         return SUCCESS;
 
     }
     //The gladiator doesnt exist in the system
-    delete gladiator;
+    delete &gladiator;
     return FAILURE;
 }

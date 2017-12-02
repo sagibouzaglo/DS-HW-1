@@ -20,10 +20,11 @@ class Colosseum{
     SplayTree<Gladiator> glad_ID_tree;
     SplayTree<Trainer> trainers_tree;
     int best_glad_ID;
+    int NumberOfGladiators ;
 
 
 public:
-    Colosseum(){}
+    Colosseum():best_glad_ID(0),NumberOfGladiators(0){}
     ~Colosseum(){
         delete &glad_ID_tree;
         delete &glad_lvl_tree;
