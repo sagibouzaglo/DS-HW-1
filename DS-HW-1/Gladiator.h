@@ -53,7 +53,7 @@ public:
 class CompareGladiatorByLevel {
 
 public:
-    explicit CompareGladiatorByLevel() {}
+     CompareGladiatorByLevel() {}
 
     int operator()(const Gladiator &glad1, const Gladiator &glad2) const {
         //WE CANNOT ALLOW IDENTICALS IDS
@@ -69,6 +69,7 @@ public:
         }
     }
 };
+
 
 
 #endif /* Gladiator_h */

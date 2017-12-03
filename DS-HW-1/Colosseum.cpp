@@ -174,19 +174,8 @@ StatusType Colosseum::UpgradeGladiator(int gladiatorID, int upgradedID) {
             //Make a cpy of the glad to upgrade
             Gladiator Glad_Cpy(gladiatorID,this->glad_ID_tree.GetRoot().GetTrainerID(),
             this->glad_ID_tree.GetRoot().GetLevel());
-
-            //Change in ID tree
-            this->glad_ID_tree.GetRoot().ChangeID(upgradedID);
-            //Change in lvl_tree
-            this->glad_lvl_tree.Search(Glad_Cpy,CompareGladiatorByLevel());
-            this->glad_lvl_tree.GetRoot().ChangeID(upgradedID);
-            if(this->best_glad_ID==gladiatorID){
-                this->best_glad_ID=upgradedID;
-            }
-            //Change in trainer's tree
-            Trainer trainer(Glad_Cpy.GetTrainerID());
-            this->trainers_tree.Search(trainer,CompareTrainer());
-            this->trainers_tree.GetRoot().UpgradeGladiator(Glad_Cpy,upgradedID);
+            this->FreeGladiator(gladiatorID);
+            this->BuyGladiator(upgradedID,Glad_Cpy.GetTrainerID(),Glad_Cpy.GetLevel());
             return SUCCESS;
         }
         return FAILURE;
@@ -259,6 +248,7 @@ static void PutBack(int num,Gladiator **locations,Gladiator** merged){
 }
  */
 StatusType Colosseum::UpgradeLevelsTree(int stimulantCode, int stimulantFactor) {
+    using namespace std;
     int num=this->NumberOfGladiators;
     Gladiator **locations=(Gladiator**)malloc(sizeof(Gladiator*)*num);
     NULL_ARGUMENT_CHECK(locations);
@@ -314,11 +304,11 @@ StatusType Colosseum::UpdateLevels(int stimulantCode, int stimulantFactor) {
 
     if(UpgradeLevelsTree(stimulantCode,stimulantFactor)==ALLOCATION_ERROR||
     UpgradeIDTree(stimulantCode,stimulantFactor)==ALLOCATION_ERROR||
-    UpgradeTrainersTrees(stimulantCode,stimulantFactor)==ALLOCATION_ERROR ){
+            UpgradeTrainersTrees(stimulantCode,stimulantFactor)==ALLOCATION_ERROR
+     ){
         return ALLOCATION_ERROR;
     }
     return SUCCESS;
-
 }
 
 

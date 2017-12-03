@@ -83,10 +83,15 @@ if ( (read_parameters)!=(required_parameters) ) { printf(ErrorString); return er
     ///***************************************************************************/
     
     int main(int argc, const char**argv) {
+        /*
+        for (int i = 0; i <argc ; ++i) {
+            cout<<i<<" = "<<argv[i]<<endl;
+        }
+        FILE *from=fopen(argv[1],"r"); */
         char buffer[MAX_STRING_INPUT_SIZE];
-        
+
         // Reading commands
-        while (fgets(buffer, MAX_STRING_INPUT_SIZE, stdin) != NULL) {
+        while (fgets(buffer, MAX_STRING_INPUT_SIZE,stdin) != NULL) {
             fflush(stdout);
             if (parser(buffer) == error)
                 break;

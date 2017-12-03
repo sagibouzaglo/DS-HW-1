@@ -11,6 +11,8 @@
 
 #include "Gladiator.h"
 #include "Splay_Tree.h"
+#include <stdio.h>
+#include "library1.h"
 
 #define NULL_ARGUMENT_CHECK(condition) \
     if(!(condition)) { \
@@ -58,6 +60,7 @@ public:
 
 };
 
+
 class CompareTrainer {
 public:
     explicit CompareTrainer() {}
@@ -102,10 +105,13 @@ static void GetLocations(int num, Gladiator** locations,SplayTree<Gladiator>& tr
 template <class Function>
 static void merge(Gladiator** merged,int num,Gladiator** Unchanged,int NC,
                   Gladiator** Changed,int C,Function& function){
+    using namespace std;
     int c=0,nc=0;
     int M=0;
+
+    CompareGladiatorByLevel func;
     while (c<C&& nc<NC){
-        if(function(*Changed[c],*Unchanged[nc])>1){
+        if(func(*Changed[c],*Unchanged[nc])>0){
             merged[M++]=Unchanged[nc++];
         } else{
             merged[M++]=Changed[c++];
@@ -117,6 +123,7 @@ static void merge(Gladiator** merged,int num,Gladiator** Unchanged,int NC,
     while (nc<NC){
         merged[M++]=Unchanged[nc++];
     }
+
 }
 
 static void CpyGlads(int num,Gladiator* gladiators,Gladiator** locations){
@@ -174,6 +181,7 @@ public:
         NULL_ARGUMENT_CHECK(merged);
         CompareGladiatorByLevel function;
         merge(merged,num, Not_to_Change,NC, To_Change, C, function);
+
         if(num!=0){
             trainer.best_update(merged[0]->GetID(),merged[0]->GetLevel());
         }
