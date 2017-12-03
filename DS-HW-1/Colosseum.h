@@ -97,5 +97,15 @@ public:
      *                FAILURE-no Such gladiatorID or upgradedID already found
      */
     StatusType UpgradeGladiator(int gladiatorID, int upgradedID);
+
+    /* Description:   This function Upgrades the lvls of gladiators who fit the
+     *                condition
+     * Input:         stimulantCode
+     *                stimulantFactor
+     * Output:        None.
+     * Return Values: INVALID INPUT-one of the codes<=1
+     *                SUCCESS- if everything went well
+     */
+    StatusType UpdateLevels(int stimulantCode, int stimulantFactor);
 };
 #endif //DS_HW_1_COLOSSEUM_H

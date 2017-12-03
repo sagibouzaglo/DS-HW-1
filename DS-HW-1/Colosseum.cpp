@@ -6,6 +6,8 @@
 #define RANDOM_TRAINER 7
 
 
+
+
 bool Colosseum::update_sys_best(int glad_ID, int glad_Lvl) {
     if(this->best_glad_lvl>glad_Lvl){
         return false;
@@ -187,3 +189,96 @@ StatusType Colosseum::UpgradeGladiator(int gladiatorID, int upgradedID) {
     }
     return FAILURE;
 }
+/**---------------------------------------------------------------------------*/
+
+
+
+/*
+class CopyGladiatorPointer {
+    Gladiator** arr;
+    int i;
+public:
+    explicit CopyGladiatorPointer(Gladiator** ptr_to_first_ptr) : arr(ptr_to_first_ptr),i(0){}
+
+    void operator()(Gladiator& glad) {
+        arr[i]= &glad;
+        i++;
+    }
+};
+/**---------------------------------------------------------------------------*/
+/*
+static void GetLocations(int num, Gladiator** locations,SplayTree<Gladiator>& tree){
+    CopyGladiatorPointer func(locations);
+    tree.BackwardsInOrder(func);
+}
+template <class Function>
+static void merge(Gladiator** merged,Gladiator** Unchanged,Gladiator** Changed,int num,Function& function){
+    int C=0,NC=0;
+    int M=0;
+    while (Changed[C] && Unchanged[NC]){
+        if(function(*Changed[C],*Unchanged[NC])>1){
+            merged[M++]=Unchanged[NC++];
+        } else{
+            merged[M++]=Changed[C++];
+        }
+    }
+    while (Changed[C]){
+        merged[M++]=Changed[C++];
+    }
+    while (Unchanged[NC]){
+        merged[M++]=Unchanged[NC++];
+    }
+}
+
+static void CpyGlads(int num,Gladiator* gladiators,Gladiator** locations){
+    for (int k = 0; k <num ; ++k) {
+        gladiators[k]=*locations[k];
+    }
+}
+
+static void GetChangedandUnchaged(int num,int stimulantCode,int stimulantFactor,
+                                  Gladiator* gladiators,Gladiator** Changed,Gladiator** UnChanged){
+    int C=0,NC=0;
+    for (int i = 0; i <num ; ++i) {
+        if(gladiators[i].GetID()%stimulantCode==0){
+            gladiators[i].LevelMultiply(stimulantFactor);
+            Changed[C++]=&gladiators[i];
+        } else{
+            UnChanged[NC++]=&gladiators[i];
+        }
+    }
+}
+
+static void PutBack(int num,Gladiator **locations,Gladiator** merged){
+    for (int j = 0; j <num ; ++j) {
+        *locations[j]=*merged[j];
+    }
+}
+
+
+/*
+
+StatusType Colosseum::UpdateLevels(int stimulantCode, int stimulantFactor) {
+
+    //Update lvl tree
+    int num=this->NumberOfGladiators;
+    Gladiator **locations=(Gladiator**)malloc(sizeof(Gladiator*)*num);
+    GetLocations(num,locations,this->glad_lvl_tree);
+    Gladiator *gladiators=(Gladiator*)malloc(sizeof(Gladiator)*num);
+    CpyGlads(num,gladiators,locations);
+    Gladiator *To_Change[num]={nullptr},*Not_to_Change[num]={nullptr};
+    GetChangedandUnchaged(num,stimulantCode,stimulantFactor,gladiators,To_Change,Not_to_Change);
+    Gladiator** merged=(Gladiator**)malloc(sizeof(Gladiator*)*num);
+    CompareGladiatorByLevel function;
+    merge(merged,Not_to_Change,To_Change,num,function);
+    PutBack(num,locations,merged);
+
+    UpdateLevels()
+    this->trainers_tree.BackwardsInOrder(function2);
+
+}
+
+*/
+
+
+

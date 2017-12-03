@@ -34,6 +34,8 @@ public:
 
     int GetTrainerID() const;
 
+    Gladiator& operator=(const Gladiator& gladiator);
+
 
 
 };

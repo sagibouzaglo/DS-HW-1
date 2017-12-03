@@ -112,3 +112,8 @@ void Trainer::UpgradeGladiator(const Gladiator& glad,int upgradedID) {
         this->best_gladiator_ID=upgradedID;
     }
 }
+/**---------------------------------------------------------------------------*/
+SplayTree<Gladiator>& Trainer::GetGladiatorsTree() {
+    return this->glad_tree;
+}
+/**---------------------------------------------------------------------------*/

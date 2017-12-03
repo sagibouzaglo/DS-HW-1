@@ -39,3 +39,10 @@ int Gladiator::GetID() const{
 int Gladiator::GetTrainerID() const {
     return this->trainerID;
 }
+/**---------------------------------------------------------------------------*/
+Gladiator& Gladiator::operator=(const Gladiator &gladiator) {
+    this->ID=gladiator.ID;
+    this->trainerID=gladiator.trainerID;
+    this->level=gladiator.level;
+    return *this;
+}

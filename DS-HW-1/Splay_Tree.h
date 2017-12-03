@@ -383,7 +383,6 @@ public:
     T& GetRoot(){
         return this->root->data;
     }
-
 };
 
 /**---------------Implementation of Splay_tree functions--------------------*/
