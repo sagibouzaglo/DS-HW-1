@@ -9,8 +9,6 @@ Trainer::Trainer(int ID) : ID(ID), number_of_gladiators(0), glad_tree(),
                            best_gladiator_ID(-1), best_gladiator_lvl(-1) {}
 
 /**---------------------------------------------------------------------------*/
-Trainer::~Trainer() {}
-
 /**---------------------------------------------------------------------------*/
 Trainer::Trainer(const Trainer &toCopy) : ID(toCopy.ID), number_of_gladiators(
         toCopy.number_of_gladiators), glad_tree(toCopy.glad_tree),
@@ -99,6 +97,10 @@ int Trainer::getNumberOfGladiators() const{
 StatusType Trainer::getAllGladiatorsByLevel(int **gladiators,
                                             int *numberofgladiators) {
     *numberofgladiators = this->number_of_gladiators;
+    if(*numberofgladiators==0){
+        *gladiators=NULL;
+        return SUCCESS;
+    }
     *gladiators = (int *) malloc(sizeof(int) * this->number_of_gladiators);
     CopyGladiatorID func(*gladiators);
     this->glad_tree.BackwardsInOrder(func);
@@ -117,3 +119,4 @@ SplayTree<Gladiator>& Trainer::GetGladiatorsTree() {
     return this->glad_tree;
 }
 /**---------------------------------------------------------------------------*/
+

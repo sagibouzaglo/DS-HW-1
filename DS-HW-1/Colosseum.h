@@ -24,13 +24,12 @@ class Colosseum{
     int NumberOfGladiators ;
 
     bool update_sys_best(int glad_ID,int glad_Lvl);
+    StatusType UpgradeLevelsTree(int stimulantCode,int stimulantFactor);
+    StatusType UpgradeIDTree(int stimulantCode,int stimulantFactor);
+    StatusType UpgradeTrainersTrees(int stimulantCode,int stimulantFactor);
 public:
-    Colosseum():best_glad_ID(-1),best_glad_lvl(0),NumberOfGladiators(0){}
-    ~Colosseum(){
-        delete &glad_ID_tree;
-        delete &glad_lvl_tree;
-        delete &trainers_tree;
-    }
+    Colosseum():glad_lvl_tree(),glad_ID_tree(),trainers_tree(),best_glad_ID(-1),best_glad_lvl(0),NumberOfGladiators(0){}
+    //~Colosseum(){}
     Colosseum(const Colosseum& col){}///////////////////////////////////////////
     /* Description:   This function inserts a new trainer to the Coloss
      * Input:         Trainer's ID

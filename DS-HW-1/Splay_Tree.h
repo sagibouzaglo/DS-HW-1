@@ -37,11 +37,12 @@ class SplayTree {
 
         Vertex<N>(const T &data, Vertex<T> *left, Vertex<T> *right) :
                 data(data), left(left), right(right) {}
-/*
+
         ~Vertex<N>(){
-            delete (&(this->data));//////////////////////////////////////////////////////
+            left=nullptr;
+            right=nullptr;
         }
-        */
+
 
         Vertex<N>(const Vertex<T> &node) : data(node.data),
                                            left(node.left),

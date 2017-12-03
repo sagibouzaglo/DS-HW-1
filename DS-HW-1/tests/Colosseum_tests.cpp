@@ -90,5 +90,9 @@ int main(){
     colosseum->UpgradeGladiator(99,MESSI);
     colosseum->UpgradeGladiator(77,CR7);
     /** Check Colosseum::UpgradeGladiator-----------------------------------------*/
+    colosseum->UpdateLevels(7,10);
+    assert(colosseum->GetTopGladiator(-1,&best)==SUCCESS);
+    assert(best==7);
+
     return 0;
 }

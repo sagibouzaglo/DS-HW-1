@@ -108,7 +108,6 @@ StatusType Colosseum::LevelUp(int gladiatorID, int levelIncrease){
         return SUCCESS;
     }
     //Gladiator doesnt exist in system
-   // delete &gladiator;
     return FAILURE;
 }
 /**---------------------------------------------------------------------------*/
@@ -139,7 +138,12 @@ StatusType Colosseum::GetAllGladiatorsByLevel(int trainerID, int **gladiators,
     }
     if(trainerID<0){
         *numOfGladiator = this->NumberOfGladiators;
+        if(*numOfGladiator==0){
+            *gladiators=NULL;
+            return SUCCESS;
+        }
         *gladiators = (int *) malloc(sizeof(int) * this->NumberOfGladiators);
+        NULL_ARGUMENT_CHECK(gladiators);
         CopyGladiatorID func(*gladiators);
         this->glad_lvl_tree.BackwardsInOrder(func);
         return SUCCESS;
@@ -205,8 +209,7 @@ public:
         i++;
     }
 };
-/**---------------------------------------------------------------------------*/
-/*
+
 static void GetLocations(int num, Gladiator** locations,SplayTree<Gladiator>& tree){
     CopyGladiatorPointer func(locations);
     tree.BackwardsInOrder(func);
@@ -254,31 +257,71 @@ static void PutBack(int num,Gladiator **locations,Gladiator** merged){
         *locations[j]=*merged[j];
     }
 }
-
-
-/*
-
-StatusType Colosseum::UpdateLevels(int stimulantCode, int stimulantFactor) {
-
-    //Update lvl tree
+ */
+StatusType Colosseum::UpgradeLevelsTree(int stimulantCode, int stimulantFactor) {
     int num=this->NumberOfGladiators;
     Gladiator **locations=(Gladiator**)malloc(sizeof(Gladiator*)*num);
+    NULL_ARGUMENT_CHECK(locations);
     GetLocations(num,locations,this->glad_lvl_tree);
     Gladiator *gladiators=(Gladiator*)malloc(sizeof(Gladiator)*num);
+    NULL_ARGUMENT_CHECK(gladiators);
     CpyGlads(num,gladiators,locations);
-    Gladiator *To_Change[num]={nullptr},*Not_to_Change[num]={nullptr};
-    GetChangedandUnchaged(num,stimulantCode,stimulantFactor,gladiators,To_Change,Not_to_Change);
+    Gladiator **To_Change =(Gladiator **) malloc(sizeof(Gladiator*) * num);
+    NULL_ARGUMENT_CHECK(To_Change);
+    Gladiator **Not_to_Change = (Gladiator **) malloc(sizeof(Gladiator*) * num);
+    NULL_ARGUMENT_CHECK(Not_to_Change);
+    int C,NC;
+    GetChangedandUnchaged(num,stimulantCode,stimulantFactor,gladiators,To_Change,Not_to_Change,&C,&NC);
     Gladiator** merged=(Gladiator**)malloc(sizeof(Gladiator*)*num);
+    NULL_ARGUMENT_CHECK(merged);
     CompareGladiatorByLevel function;
-    merge(merged,Not_to_Change,To_Change,num,function);
+    merge(merged,num,Not_to_Change,NC,To_Change,C,function);
+    if(num!=0){
+        this->best_glad_ID=merged[0]->GetID();
+        this->best_glad_lvl=merged[0]->GetLevel();
+    }
     PutBack(num,locations,merged);
+    free(locations);
+    free(gladiators);
+    free(merged);
+    free(To_Change);
+    free(Not_to_Change);
+    return SUCCESS;
+}
 
-    UpdateLevels()
-    this->trainers_tree.BackwardsInOrder(function2);
+StatusType Colosseum::UpgradeIDTree(int stimulantCode, int stimulantFactor) {
+    int num=this->NumberOfGladiators;
+    Gladiator **locations=(Gladiator**)malloc(sizeof(Gladiator*)*num);
+    NULL_ARGUMENT_CHECK(locations);
+    GetLocations(num,locations,this->glad_ID_tree);
+    for (int i = 0; i <num ; ++i) {
+        if((*locations[i]).GetID()%stimulantCode==0){
+            (*locations[i]).LevelMultiply(stimulantFactor);
+        }
+    }
+    free(locations);
+    return SUCCESS;
+}
+StatusType Colosseum::UpgradeTrainersTrees(int stimulantCode,
+                                           int stimulantFactor) {
+    TrainersUpgradeLevels activate(stimulantCode,stimulantFactor);
+    this->trainers_tree.InOrder(activate);
+    return SUCCESS;
+}
+
+StatusType Colosseum::UpdateLevels(int stimulantCode, int stimulantFactor) {
+    if(stimulantCode<1 || stimulantFactor< 1)return INVALID_INPUT;
+
+    if(UpgradeLevelsTree(stimulantCode,stimulantFactor)==ALLOCATION_ERROR||
+    UpgradeIDTree(stimulantCode,stimulantFactor)==ALLOCATION_ERROR||
+    UpgradeTrainersTrees(stimulantCode,stimulantFactor)==ALLOCATION_ERROR ){
+        return ALLOCATION_ERROR;
+    }
+    return SUCCESS;
 
 }
 
-*/
+
 
 
 
