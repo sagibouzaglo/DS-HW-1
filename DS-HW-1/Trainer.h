@@ -105,7 +105,6 @@ static void GetLocations(int num, Gladiator** locations,SplayTree<Gladiator>& tr
 template <class Function>
 static void merge(Gladiator** merged,int num,Gladiator** Unchanged,int NC,
                   Gladiator** Changed,int C,Function& function){
-    using namespace std;
     int c=0,nc=0;
     int M=0;
 
