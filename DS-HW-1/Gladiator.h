@@ -15,6 +15,7 @@ class Gladiator {
     int ID;
     int trainerID;
     int level;
+
 public:
     Gladiator(int ID, int trainerID, int level);
 
